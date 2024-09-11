@@ -22,6 +22,10 @@
 5. [АКМС](semestr-4/AKMS/)
 6. [ТПР](semestr-4/ТПР/)
 
+### [Семестр 5](semestr-5/)
+1. [Блэндер](semestr-5/Blender/)
+2. [Нейронки](semestr-5/Neyronki/)
+3. [МБП](semestr-5/MBP/)
 
 ## Помощь утопающим 
 
