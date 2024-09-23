@@ -60,15 +60,6 @@ type Teacher struct {
 	Area   []string //область экспертности
 }
 
-// Класс "Форум"
-type Forum struct {
-	Title    string
-	Question string
-	UsersSt  []Student
-	UsersT   []Teacher
-	Answers  []string
-}
-
 // Класс "Инструменты/Платформы"
 type Tool struct {
 	Name        string
