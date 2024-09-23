@@ -289,7 +289,7 @@ func PrintCourseHierarchy(course *Course) {
 			fmt.Printf("Вопрос: %s\n", test.Question)
 			fmt.Println("Варианты ответов:")
 			for i, answer := range test.Answer_options {
-				fmt.Println("   ", i+1, ": ", answer)
+				fmt.Printf("    %v: %s\n", i+1, answer)
 			}
 			fmt.Printf("  Правильный ответ: %s\n", test.Right_answer)
 		}
