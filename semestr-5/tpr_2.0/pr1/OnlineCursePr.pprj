@@ -1,4 +1,4 @@
-; Mon Sep 23 22:17:35 MSK 2024
+; Tue Sep 24 13:21:29 MSK 2024
 ; 
 ;+ (version "3.2")
 ;+ (build "Build 355")
@@ -21,16 +21,16 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[OnlineCursePr_ProjectKB_Instance_30108]
-		[OnlineCursePr_ProjectKB_Instance_30109]
-		[OnlineCursePr_ProjectKB_Instance_30110]
-		[OnlineCursePr_ProjectKB_Instance_30111]
-		[OnlineCursePr_ProjectKB_Instance_30112]
-		[OnlineCursePr_ProjectKB_Instance_30113]
-		[OnlineCursePr_ProjectKB_Instance_30114]
-		[OnlineCursePr_ProjectKB_Instance_30115]
-		[OnlineCursePr_ProjectKB_Instance_30116]
-		[OnlineCursePr_ProjectKB_Instance_30117]))
+		[OnlineCursePr_ProjectKB_Instance_10064]
+		[OnlineCursePr_ProjectKB_Instance_10065]
+		[OnlineCursePr_ProjectKB_Instance_10066]
+		[OnlineCursePr_ProjectKB_Instance_10067]
+		[OnlineCursePr_ProjectKB_Instance_10068]
+		[OnlineCursePr_ProjectKB_Instance_10069]
+		[OnlineCursePr_ProjectKB_Instance_10070]
+		[OnlineCursePr_ProjectKB_Instance_10071]
+		[OnlineCursePr_ProjectKB_Instance_10072]
+		[OnlineCursePr_ProjectKB_Instance_10073]))
 
 ([CLSES_TAB] of  Widget
 
@@ -592,89 +592,179 @@
 ([OnlineCursePr_ProjectKB_Instance_10063] of  Property_List
 )
 
-([OnlineCursePr_ProjectKB_Instance_10074] of  Widget
+([OnlineCursePr_ProjectKB_Instance_10064] of  String
+
+	(name "Занятия")
+	(string_value "%D1%82%D0%B5%D0%BC%D0%B0_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F"))
+
+([OnlineCursePr_ProjectKB_Instance_10065] of  String
+
+	(name "Курсы")
+	(string_value "%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"))
+
+([OnlineCursePr_ProjectKB_Instance_10066] of  String
+
+	(name "Тесты")
+	(string_value "%D0%B2%D0%BE%D0%BF%D1%80%D0%BE%D1%81%D1%8B"))
+
+([OnlineCursePr_ProjectKB_Instance_10067] of  String
+
+	(name "Программные языки")
+	(string_value "%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"))
+
+([OnlineCursePr_ProjectKB_Instance_10068] of  String
+
+	(name ":PAL-CONSTRAINT")
+	(string_value "%3APAL-NAME"))
+
+([OnlineCursePr_ProjectKB_Instance_10069] of  String
+
+	(name "Учащиеся")
+	(string_value "%D0%B8%D0%BC%D1%8F"))
+
+([OnlineCursePr_ProjectKB_Instance_10070] of  String
+
+	(name ":INSTANCE-ANNOTATION")
+	(string_value "%3AANNOTATION-TEXT"))
+
+([OnlineCursePr_ProjectKB_Instance_10071] of  String
+
+	(name "Задания")
+	(string_value "%D0%9D%D0%BE%D0%BC%D0%B5%D1%80+%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F"))
+
+([OnlineCursePr_ProjectKB_Instance_10072] of  String
+
+	(name "Преподаватели")
+	(string_value "%D0%B8%D0%BC%D1%8F"))
+
+([OnlineCursePr_ProjectKB_Instance_10073] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([OnlineCursePr_ProjectKB_Instance_10074] of  Map
+
+	(entries
+		[OnlineCursePr_ProjectKB_Instance_10075]
+		[OnlineCursePr_ProjectKB_Instance_10076]
+		[OnlineCursePr_ProjectKB_Instance_10077]))
+
+([OnlineCursePr_ProjectKB_Instance_10075] of  Map_Entry
+
+	(key "KB_700239_Instance_61")
+	(key_class "edu.stanford.smi.protege.model.Frame")
+	(value "449 17 208 131")
+	(value_class "java.awt.Rectangle"))
+
+([OnlineCursePr_ProjectKB_Instance_10076] of  Map_Entry
+
+	(key "KB_700239_Instance_62")
+	(key_class "edu.stanford.smi.protege.model.Frame")
+	(value "485 76 208 131")
+	(value_class "java.awt.Rectangle"))
+
+([OnlineCursePr_ProjectKB_Instance_10077] of  Map_Entry
+
+	(key "OnlineCursePr_Instance_0")
+	(key_class "edu.stanford.smi.protege.model.Frame")
+	(value "479 -10 210 133")
+	(value_class "java.awt.Rectangle"))
+
+([OnlineCursePr_ProjectKB_Instance_10078] of  Map_Entry
+
+	(key "InstanceDisplay.yellow_stickies")
+	(key_class "java.lang.String")
+	(value "OnlineCursePr_ProjectKB_Instance_10074")
+	(value_class "java.util.Map"))
+
+([OnlineCursePr_ProjectKB_Instance_10079] of  Widget
 
 	(is_hidden FALSE)
-	(name "Форум")
-	(property_list [OnlineCursePr_ProjectKB_Instance_10075])
+	(name "Задания")
+	(property_list [OnlineCursePr_ProjectKB_Instance_10080])
 	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget"))
 
-([OnlineCursePr_ProjectKB_Instance_10075] of  Property_List
+([OnlineCursePr_ProjectKB_Instance_10080] of  Property_List
 
-	(properties [OnlineCursePr_ProjectKB_Instance_10076]))
+	(properties
+		[OnlineCursePr_ProjectKB_Instance_10081]
+		[OnlineCursePr_ProjectKB_Instance_10082]
+		[OnlineCursePr_ProjectKB_Instance_10084]
+		[OnlineCursePr_ProjectKB_Instance_10086]
+		[OnlineCursePr_ProjectKB_Instance_20116]))
 
-([OnlineCursePr_ProjectKB_Instance_10076] of  Property_List
+([OnlineCursePr_ProjectKB_Instance_10081] of  Property_List
 
 	(name "layout properties"))
 
-([OnlineCursePr_ProjectKB_Instance_10077] of  Widget
+([OnlineCursePr_ProjectKB_Instance_10082] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "условие_задачи")
+	(property_list [OnlineCursePr_ProjectKB_Instance_10083])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 480)
+	(x 100)
+	(y 0))
+
+([OnlineCursePr_ProjectKB_Instance_10083] of  Property_List
+)
+
+([OnlineCursePr_ProjectKB_Instance_10084] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "оценка")
+	(property_list [OnlineCursePr_ProjectKB_Instance_10085])
+	(widget_class_name "edu.stanford.smi.protege.widget.IntegerFieldWidget")
+	(width 100)
+	(x 0)
+	(y 60))
+
+([OnlineCursePr_ProjectKB_Instance_10085] of  Property_List
+)
+
+([OnlineCursePr_ProjectKB_Instance_10086] of  Widget
 
 	(height 120)
 	(is_hidden FALSE)
-	(name "ответы")
-	(property_list [OnlineCursePr_ProjectKB_Instance_10078])
+	(name "требования")
+	(property_list [OnlineCursePr_ProjectKB_Instance_10087])
 	(widget_class_name "edu.stanford.smi.protege.widget.StringListWidget")
 	(width 200)
 	(x 0)
 	(y 120))
 
-([OnlineCursePr_ProjectKB_Instance_10078] of  Property_List
+([OnlineCursePr_ProjectKB_Instance_10087] of  Property_List
 )
 
-([OnlineCursePr_ProjectKB_Instance_10079] of  Widget
+([OnlineCursePr_ProjectKB_Instance_10114] of  Widget
 
-	(height 60)
+	(height 120)
 	(is_hidden FALSE)
-	(name "тема_обсуждения")
-	(property_list [OnlineCursePr_ProjectKB_Instance_10080])
-	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
-	(width 200)
-	(x 0)
-	(y 0))
-
-([OnlineCursePr_ProjectKB_Instance_10080] of  Property_List
-)
-
-([OnlineCursePr_ProjectKB_Instance_10081] of  Widget
-
-	(height 240)
-	(is_hidden FALSE)
-	(name "пользователи")
-	(property_list [OnlineCursePr_ProjectKB_Instance_10082])
+	(name "практические_задания")
+	(property_list [OnlineCursePr_ProjectKB_Instance_10115])
 	(widget_class_name "edu.stanford.smi.protege.widget.InstanceListWidget")
 	(width 200)
-	(x 200)
+	(x 210)
 	(y 0))
 
-([OnlineCursePr_ProjectKB_Instance_10082] of  Property_List
+([OnlineCursePr_ProjectKB_Instance_10115] of  Property_List
 
 	(properties
-		[OnlineCursePr_ProjectKB_Instance_10083]
-		[OnlineCursePr_ProjectKB_Instance_10084]))
+		[OnlineCursePr_ProjectKB_Instance_10116]
+		[OnlineCursePr_ProjectKB_Instance_10117]))
 
-([OnlineCursePr_ProjectKB_Instance_10083] of  Boolean
+([OnlineCursePr_ProjectKB_Instance_10116] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-View References to Value"))
 
-([OnlineCursePr_ProjectKB_Instance_10084] of  Boolean
+([OnlineCursePr_ProjectKB_Instance_10117] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
-
-([OnlineCursePr_ProjectKB_Instance_10085] of  Widget
-
-	(height 60)
-	(is_hidden FALSE)
-	(name "вопросы")
-	(property_list [OnlineCursePr_ProjectKB_Instance_10086])
-	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
-	(width 200)
-	(x 0)
-	(y 60))
-
-([OnlineCursePr_ProjectKB_Instance_10086] of  Property_List
-)
 
 ([OnlineCursePr_ProjectKB_Instance_11] of  Property_List
 )
@@ -766,6 +856,20 @@
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
 
+([OnlineCursePr_ProjectKB_Instance_20116] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Номер задания")
+	(property_list [OnlineCursePr_ProjectKB_Instance_20117])
+	(widget_class_name "edu.stanford.smi.protege.widget.IntegerFieldWidget")
+	(width 100)
+	(x 0)
+	(y 0))
+
+([OnlineCursePr_ProjectKB_Instance_20117] of  Property_List
+)
+
 ([OnlineCursePr_ProjectKB_Instance_21] of  Property_List
 )
 
@@ -786,8 +890,8 @@
 
 ([OnlineCursePr_ProjectKB_Instance_230] of  Map
 
-	(entries [OnlineCursePr_ProjectKB_Instance_30122])
-	(referenced_maps [OnlineCursePr_ProjectKB_Instance_30118]))
+	(entries [OnlineCursePr_ProjectKB_Instance_10078])
+	(referenced_maps [OnlineCursePr_ProjectKB_Instance_10074]))
 
 ([OnlineCursePr_ProjectKB_Instance_24] of  Widget
 
@@ -814,10 +918,10 @@
 
 	(properties
 		[OnlineCursePr_ProjectKB_Instance_30]
-		[OnlineCursePr_ProjectKB_Instance_31]
 		[OnlineCursePr_ProjectKB_Instance_35]
 		[OnlineCursePr_ProjectKB_Instance_37]
-		[OnlineCursePr_ProjectKB_Instance_39]))
+		[OnlineCursePr_ProjectKB_Instance_39]
+		[OnlineCursePr_ProjectKB_Instance_10114]))
 
 ([OnlineCursePr_ProjectKB_Instance_3] of  Property_List
 )
@@ -825,91 +929,6 @@
 ([OnlineCursePr_ProjectKB_Instance_30] of  Property_List
 
 	(name "layout properties"))
-
-([OnlineCursePr_ProjectKB_Instance_30108] of  String
-
-	(name "Занятия")
-	(string_value "%D1%82%D0%B5%D0%BC%D0%B0_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F"))
-
-([OnlineCursePr_ProjectKB_Instance_30109] of  String
-
-	(name "Курсы")
-	(string_value "%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"))
-
-([OnlineCursePr_ProjectKB_Instance_30110] of  String
-
-	(name "Тесты")
-	(string_value "%D0%B2%D0%BE%D0%BF%D1%80%D0%BE%D1%81%D1%8B"))
-
-([OnlineCursePr_ProjectKB_Instance_30111] of  String
-
-	(name "Программные языки")
-	(string_value "%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"))
-
-([OnlineCursePr_ProjectKB_Instance_30112] of  String
-
-	(name ":PAL-CONSTRAINT")
-	(string_value "%3APAL-NAME"))
-
-([OnlineCursePr_ProjectKB_Instance_30113] of  String
-
-	(name ":INSTANCE-ANNOTATION")
-	(string_value "%3AANNOTATION-TEXT"))
-
-([OnlineCursePr_ProjectKB_Instance_30114] of  String
-
-	(name "Учащиеся")
-	(string_value "%D0%B8%D0%BC%D1%8F"))
-
-([OnlineCursePr_ProjectKB_Instance_30115] of  String
-
-	(name "Задания")
-	(string_value "%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8"))
-
-([OnlineCursePr_ProjectKB_Instance_30116] of  String
-
-	(name "Преподаватели")
-	(string_value "%D0%B8%D0%BC%D1%8F"))
-
-([OnlineCursePr_ProjectKB_Instance_30117] of  String
-
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
-
-([OnlineCursePr_ProjectKB_Instance_30118] of  Map
-
-	(entries
-		[OnlineCursePr_ProjectKB_Instance_30119]
-		[OnlineCursePr_ProjectKB_Instance_30120]
-		[OnlineCursePr_ProjectKB_Instance_30121]))
-
-([OnlineCursePr_ProjectKB_Instance_30119] of  Map_Entry
-
-	(key "KB_700239_Instance_61")
-	(key_class "edu.stanford.smi.protege.model.Frame")
-	(value "449 17 208 131")
-	(value_class "java.awt.Rectangle"))
-
-([OnlineCursePr_ProjectKB_Instance_30120] of  Map_Entry
-
-	(key "KB_700239_Instance_62")
-	(key_class "edu.stanford.smi.protege.model.Frame")
-	(value "485 76 208 131")
-	(value_class "java.awt.Rectangle"))
-
-([OnlineCursePr_ProjectKB_Instance_30121] of  Map_Entry
-
-	(key "OnlineCursePr_Instance_0")
-	(key_class "edu.stanford.smi.protege.model.Frame")
-	(value "479 -10 210 133")
-	(value_class "java.awt.Rectangle"))
-
-([OnlineCursePr_ProjectKB_Instance_30122] of  Map_Entry
-
-	(key "InstanceDisplay.yellow_stickies")
-	(key_class "java.lang.String")
-	(value "OnlineCursePr_ProjectKB_Instance_30118")
-	(value_class "java.util.Map"))
 
 ([OnlineCursePr_ProjectKB_Instance_30133] of  Widget
 
@@ -934,33 +953,6 @@
 	(name "ButtonDisplayed-View References to Value"))
 
 ([OnlineCursePr_ProjectKB_Instance_30136] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-Delete Instance"))
-
-([OnlineCursePr_ProjectKB_Instance_31] of  Widget
-
-	(height 70)
-	(is_hidden FALSE)
-	(name "практические_задания")
-	(property_list [OnlineCursePr_ProjectKB_Instance_32])
-	(widget_class_name "edu.stanford.smi.protege.widget.InstanceFieldWidget")
-	(width 200)
-	(x 220)
-	(y 0))
-
-([OnlineCursePr_ProjectKB_Instance_32] of  Property_List
-
-	(properties
-		[OnlineCursePr_ProjectKB_Instance_33]
-		[OnlineCursePr_ProjectKB_Instance_34]))
-
-([OnlineCursePr_ProjectKB_Instance_33] of  Boolean
-
-	(boolean_value FALSE)
-	(name "ButtonDisplayed-View References to Value"))
-
-([OnlineCursePr_ProjectKB_Instance_34] of  Boolean
 
 	(boolean_value FALSE)
 	(name "ButtonDisplayed-Delete Instance"))
@@ -1123,13 +1115,14 @@
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
 		[OnlineCursePr_ProjectKB_Instance_28]
-		[STANDARD_CLASS_FORM_WIDGET]
-		[STANDARD_SLOT_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET]
 		[KB_350533_Instance_29]
 		[OnlineCursePr_ProjectKB_Instance_17]
+		[STANDARD_CLASS_FORM_WIDGET]
 		[PAL_FORM_WIDGET]
-		[INSTANCE_ANNOTATION_FORM_WIDGET])
+		[STANDARD_SLOT_FORM_WIDGET]
+		[INSTANCE_ANNOTATION_FORM_WIDGET]
+		[OnlineCursePr_ProjectKB_Instance_10079]
+		[STANDARD_FACET_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
