@@ -16,63 +16,61 @@ func main() {
 	fmt.Print("Введите строку: ")
 	fmt.Fscan(in, &str)
 	for {
-		fmt.Print("1-Разворот регистра\n2-Обратная строка \n3-Разделить строку \n4-Удалить буквы \n5-Удалить числа \n6-Выход \n0-Обновить строку \nВыберите дальнейшее действие: ")
+		fmt.Print("1-Разворот регистра\n2-Обратная строка \n3-Разделить строку \n4-Удалить цифры \n5-Удалить буквы \n6-Выход \n0-Обновить строку \nВыберите дальнейшее действие: ")
 		var d int
 		fmt.Fscan(in, &d)
+
 		switch d {
 		case 1:
-			fmt.Print("Разворот регистра: ")
-			str.Flip()
+			fmt.Printf("Разворот регистра: %s\n", str.Flip())
 		case 2:
-			fmt.Print("Обратная строка: ")
-			str.Reverse()
+			fmt.Printf("Обратная строка: %s\n", str.Reverse())
 		case 3:
 			var n int
 			fmt.Print("Введите количество символов для разделения: ")
 			fmt.Fscan(in, &n)
-			str.Del(n)
+			fmt.Printf("Разделённая строка: \n%s\n", str.Del(n))
 		case 4:
-			fmt.Print("Удаление букв: ")
-			str.OnlyDigit()
+			fmt.Printf("Удаление цифр: %s\n", str.OnlySim())
 		case 5:
-			fmt.Print("Удаление букв: ")
-			str.OnlySim()
+			fmt.Printf("Удаление букв: %s\n", str.OnlyDigit())
 		case 6:
 			fmt.Println("Завершение...")
-			time.Sleep(3 * time.Second)
+			time.Sleep(1 * time.Second)
 			os.Exit(0)
 		case 0:
-			fmt.Print("Введите строку: ")
+			fmt.Print("Введите новую строку: ")
 			fmt.Fscan(in, &str)
 		default:
-			fmt.Print("Нет такой команды")
+			fmt.Println("Нет такой команды.")
 		}
+
 		time.Sleep(1 * time.Second)
 	}
 }
 
-func (s Str) OnlyDigit() {
+func (s Str) OnlyDigit() string {
 	var result []rune
 	for _, r := range s {
 		if unicode.IsDigit(r) {
 			result = append(result, r)
-			result = append(result, r) // Это для ошибки (выводит числа два раза)
+			result = append(result, r) // специальная ошибка (х2 цифры)
 		}
 	}
-	fmt.Println(string(result))
+	return string(result)
 }
 
-func (s Str) OnlySim() {
+func (s Str) OnlySim() string {
 	var result []rune
 	for _, r := range s {
 		if !unicode.IsDigit(r) {
 			result = append(result, r)
 		}
 	}
-	fmt.Println(string(result))
+	return string(result)
 }
 
-func (s Str) Del(n int) {
+func (s Str) Del(n int) string {
 	res := ""
 	count := 0
 	for _, ch := range s {
@@ -83,18 +81,18 @@ func (s Str) Del(n int) {
 		res += string(ch)
 		count++
 	}
-	fmt.Println(res)
+	return res
 }
 
-func (s Str) Reverse() {
+func (s Str) Reverse() string {
 	res := ""
 	for _, ch := range s {
 		res = string(ch) + res
 	}
-	fmt.Println(res)
+	return res
 }
 
-func (s Str) Flip() {
+func (s Str) Flip() string {
 	runes := []rune(s)
 	for i, r := range runes {
 		if unicode.IsLower(r) {
@@ -103,5 +101,5 @@ func (s Str) Flip() {
 			runes[i] = unicode.ToLower(r)
 		}
 	}
-	fmt.Println(string(runes))
+	return string(runes)
 }
