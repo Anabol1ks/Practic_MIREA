@@ -54,7 +54,6 @@ func (s Str) OnlyDigit() string {
 	for _, r := range s {
 		if unicode.IsDigit(r) {
 			result = append(result, r)
-			result = append(result, r) // специальная ошибка (х2 цифры)
 		}
 	}
 	return string(result)
