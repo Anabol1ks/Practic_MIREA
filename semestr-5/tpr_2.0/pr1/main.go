@@ -56,12 +56,6 @@ type Teacher struct {
 	Area   []string //область экспертности
 }
 
-// Класс "Инструменты/Платформы"
-type Tool struct {
-	Name        string
-	Integration []Course
-}
-
 func main() {
 	plang1 := Program_Languages{
 		Title:                "GoLang",
@@ -167,7 +161,7 @@ func main() {
 			}
 		}
 	}
-	fmt.Println("\n")
+	fmt.Println()
 	fmt.Println("Задание, которое оценивается больше чем в 2 балла: ")
 	for _, i := range pracs {
 		if i.Evaluation > 2 {
@@ -188,62 +182,63 @@ func main() {
 			}
 		}
 	}
-	// fmt.Println("Что вы хотите найти?\n 1.Курс по названию \n 2.Ученика по имени \n 3.Курс по языку программирования")
-	// var otv int
-	// fmt.Scan(&otv)
-	// fmt.Scanln()
-	// reader := bufio.NewReader(os.Stdin)
-	// switch otv {
-	// case 1:
-	// 	courseTitle := ""
-	// 	fmt.Println("Введите название курса:")
-
-	// 	// Используем bufio.NewReader для считывания всей строки
-	// 	courseTitle, _ = reader.ReadString('\n')
-
-	// 	// Убираем символ новой строки
-	// 	courseTitle = strings.TrimSpace(courseTitle)
-
-	// 	foundCourse := FindCourseByTitle(courses, courseTitle)
-	// 	if foundCourse != nil {
-	// 		PrintCourseHierarchy(foundCourse)
-	// 	} else {
-	// 		fmt.Println("Курс с названием", courseTitle, "не найден.")
-	// 	}
-
-	// case 2:
-	// 	studentName := ""
-	// 	fmt.Println("Введите имя студента:")
-
-	// 	studentName, _ = reader.ReadString('\n')
-	// 	studentName = strings.TrimSpace(studentName)
-
-	// 	foundStudent := FindStudentByName(students, studentName)
-	// 	if foundStudent != nil {
-	// 		PrintStudentHierarchy(foundStudent)
-	// 	} else {
-	// 		fmt.Println("Студент с именем", studentName, "не найден.")
-	// 	}
-	// case 3:
-	// 	language := ""
-	// 	fmt.Println("Введите язык программирования:")
-
-	// 	language, _ = reader.ReadString('\n')
-	// 	language = strings.TrimSpace(language)
-
-	// 	foundCourses := FindCoursesByLanguage(courses, language)
-	// 	if len(foundCourses) > 0 {
-	// 		fmt.Println("Курсы, в которых используется язык", language, ":")
-	// 		for _, course := range foundCourses {
-	// 			PrintCourseHierarchy(&course)
-	// 		}
-	// 	} else {
-	// 		fmt.Println("Курсы с использованием языка", language, "не найдены.")
-	// 	}
-	// default:
-	// 	fmt.Println("Ошибка!")
-	// }
 }
+
+// fmt.Println("Что вы хотите найти?\n 1.Курс по названию \n 2.Ученика по имени \n 3.Курс по языку программирования")
+// var otv int
+// fmt.Scan(&otv)
+// fmt.Scanln()
+// reader := bufio.NewReader(os.Stdin)
+// switch otv {
+// case 1:
+// 	courseTitle := ""
+// 	fmt.Println("Введите название курса:")
+
+// 	// Используем bufio.NewReader для считывания всей строки
+// 	courseTitle, _ = reader.ReadString('\n')
+
+// 	// Убираем символ новой строки
+// 	courseTitle = strings.TrimSpace(courseTitle)
+
+// 	foundCourse := FindCourseByTitle(courses, courseTitle)
+// 	if foundCourse != nil {
+// 		PrintCourseHierarchy(foundCourse)
+// 	} else {
+// 		fmt.Println("Курс с названием", courseTitle, "не найден.")
+// 	}
+
+// case 2:
+// 	studentName := ""
+// 	fmt.Println("Введите имя студента:")
+
+// 	studentName, _ = reader.ReadString('\n')
+// 	studentName = strings.TrimSpace(studentName)
+
+// 	foundStudent := FindStudentByName(students, studentName)
+// 	if foundStudent != nil {
+// 		PrintStudentHierarchy(foundStudent)
+// 	} else {
+// 		fmt.Println("Студент с именем", studentName, "не найден.")
+// 	}
+// case 3:
+// 	language := ""
+// 	fmt.Println("Введите язык программирования:")
+
+// 	language, _ = reader.ReadString('\n')
+// 	language = strings.TrimSpace(language)
+
+// 	foundCourses := FindCoursesByLanguage(courses, language)
+// 	if len(foundCourses) > 0 {
+// 		fmt.Println("Курсы, в которых используется язык", language, ":")
+// 		for _, course := range foundCourses {
+// 			PrintCourseHierarchy(&course)
+// 		}
+// 	} else {
+// 		fmt.Println("Курсы с использованием языка", language, "не найдены.")
+// 	}
+// default:
+// 	fmt.Println("Ошибка!")
+// }
 
 // func FindCoursesByLanguage(courses []Course, language string) []Course {
 // 	var result []Course
