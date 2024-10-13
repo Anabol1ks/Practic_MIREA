@@ -249,3 +249,39 @@ WHERE cpu_model LIKE '%AMD%'
 
 SELECT * FROM PC
 WHERE cpu_model NOT LIKE '%AMD%'
+
+
+CREATE TABLE tar (
+    tariff_id SERIAL PRIMARY KEY,
+    tariff_name VARCHAR(50) NOT NULL,
+    price_per_hour DECIMAL NOT NULL
+);
+
+INSERT INTO tar (tariff_name, price_per_hour) 
+VALUES
+('Standard', 5.00), 
+('Premium', 10.00), 
+('VIP', 15.00), 
+('Economy', 3.00), 
+('Elite', 18.00);
+
+ALTER TABLE tar ADD COLUMN bonus numeric;
+
+UPDATE tar
+SET bonus = CASE
+    WHEN tariff_id = 1 THEN 1.5
+    WHEN tariff_id = 2 THEN 2.0
+    WHEN tariff_id = 3 THEN 2.5
+    WHEN tariff_id = 4 THEN 1.0
+    WHEN tariff_id = 5 THEN 0.5
+END
+WHERE tariff_id IN (1, 2, 3, 4, 5);
+
+SELECT * FROM tar;
+
+UPDATE tar
+SET bonus = 10
+WHERE tariff_id IN (3, 5);
+
+ALTER TABLE tar
+RENAME COLUMN tariff_name TO tariff_plan;
