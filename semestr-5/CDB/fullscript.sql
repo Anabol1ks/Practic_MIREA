@@ -285,3 +285,136 @@ WHERE tariff_id IN (3, 5);
 
 ALTER TABLE tar
 RENAME COLUMN tariff_name TO tariff_plan;
+
+
+DELETE FROM tar
+WHERE tariff_id IN (2, 4);
+
+
+SELECT * FROM Workstation
+WHERE pc_id > 4 AND pc_id < 6;
+
+CREATE TABLE c (
+    client_id SERIAL PRIMARY KEY,
+    full_name_id INT NOT NULL,
+    birth_date DATE,
+    phone_number VARCHAR(20) NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL
+);
+
+INSERT INTO c (full_name_id, birth_date, phone_number, email)
+VALUES
+(1, '1985-05-12', '1234567890', 'john.doe@example.com'),
+(3, '1988-03-15', '1122334455', 'sam.brown@example.com'),
+(5, '1980-12-25', '6677889900', 'chris.lee@example.com'),
+(7, '1983-01-05', '8899001122', 'michael.miller@example.com'),
+(9, '1981-09-14', '1122445566', 'david.moore@example.com');
+
+SELECT * FROM client
+INNER JOIN c ON client.full_name_id = c.full_name_id;
+
+
+SELECT * FROM client
+RIGHT JOIN c ON client.full_name_id = c.full_name_id;
+
+
+SELECT * FROM client
+LEFT JOIN c ON client.full_name_id = c.full_name_id;
+
+
+1. Операция UNION
+Соединяет результаты двух запросов и исключает дубликаты.
+
+
+SELECT full_name_id, birth_date, phone_number, email FROM client
+UNION
+SELECT full_name_id, birth_date, phone_number, email FROM c;
+Если тебе нужно сохранить дубликаты, используй UNION ALL:
+
+
+
+SELECT full_name_id, birth_date, phone_number, email FROM client
+UNION ALL
+SELECT full_name_id, birth_date, phone_number, email FROM c;
+2. Операция EXISTS
+Проверяет наличие строк в подзапросе.
+
+
+
+SELECT *
+FROM client
+WHERE EXISTS (
+    SELECT 1 FROM c WHERE client.full_name_id = c.full_name_id
+);
+Этот запрос вернёт строки из таблицы client, если соответствующие строки существуют в таблице c.
+
+3. Операция NOT EXISTS
+Возвращает строки, где нет соответствующих строк в другой таблице.
+
+
+
+SELECT *
+FROM client
+WHERE NOT EXISTS (
+    SELECT 1 FROM c WHERE client.full_name_id = c.full_name_id
+);
+Этот запрос вернёт строки из таблицы client, для которых не существует соответствующих строк в таблице c.
+
+4. Операции MAX(), MIN(), AVG(), SUM()
+SELECT 
+	MAX(birth_date) max_birth_date, 
+	MIN(birth_date) AS min_birth_date, 
+	AVG(EXTRACT(YEAR FROM AGE(birth_date))) AS avg_age, 
+	SUM(EXTRACT(YEAR FROM AGE(birth_date))) AS total_years
+FROM client;
+
+5. Операция COUNT
+
+SELECT COUNT(*) AS total_clients FROM client
+WHERE client_id >=3
+
+6. Операция GROUP BY
+
+
+SELECT EXTRACT(YEAR FROM birth_date) AS birth_year, COUNT(*) AS count_clients
+FROM client
+GROUP BY EXTRACT(YEAR FROM birth_date);
+Этот запрос сгруппирует строки по году рождения и покажет количество клиентов, родившихся в каждый год.
+
+7. Операция HAVING
+
+
+SELECT EXTRACT(YEAR FROM birth_date) AS birth_year, COUNT(*) AS count_clients
+FROM client
+GROUP BY EXTRACT(YEAR FROM birth_date)
+HAVING COUNT(*) > 1;
+Этот запрос вернёт только те группы, где больше одного клиента родились в одном году.
+
+8. Операция ORDER BY
+
+
+SELECT * FROM client
+ORDER BY birth_date DESC;
+Этот запрос отсортирует клиентов по дате рождения в обратном порядке (от самого позднего к самому раннему).
+
+9. Операция деления
+
+INSERT INTO session (client_id, workstation_id, start_time, end_time)
+VALUES
+(1, 1, '2024-10-05 09:00:00', '2024-10-05 11:00:00'), 
+(1, 4, '2024-10-05 13:00:00', '2024-10-05 15:00:00'),
+(1, 3, '2024-10-05 11:00:00', '2024-10-05 13:00:00'),
+(1, 5, '2024-10-05 15:00:00', '2024-10-05 17:00:00'),
+(1, 6, '2024-10-05 17:00:00', '2024-10-05 19:00:00'),
+(1, 7, '2024-10-05 19:00:00', '2024-10-05 21:00:00'),
+(1, 8, '2024-10-05 21:00:00', '2024-10-05 23:00:00'),
+(1, 9, '2024-10-05 23:00:00', '2024-10-06 01:00:00'),
+(1, 10, '2024-10-06 01:00:00', '2024-10-06 03:00:00'); 
+
+SELECT client_id
+FROM session
+GROUP BY client_id
+HAVING COUNT(DISTINCT workstation_id) = (SELECT COUNT(*) FROM workstation);
+Этот запрос вернет клиента, который использовал все доступные рабочие станции.
+
+Проверь этот запрос после добавления сессий — он должен вернуть клиента с client_id = 1
