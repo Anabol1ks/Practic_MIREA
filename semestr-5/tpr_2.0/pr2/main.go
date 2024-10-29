@@ -64,7 +64,7 @@ func simulatedAnnealing(cities []City, initialTemp, coolingRate float64, maxIter
 
 		currentTemp *= coolingRate
 
-		fmt.Printf("Итерация %d: Текущее расстояние %f, Лучшее расстояние %f\n", i+1, currentDistance, totalDistance(bestRoute))
+		fmt.Printf("Итерация %d: Текущее расстояние %f, Лучшее расстояние %f, Температура %v\n", i+1, currentDistance, totalDistance(bestRoute), currentTemp)
 	}
 
 	return bestRoute
@@ -83,7 +83,7 @@ func main() {
 		{"Сидней", -33.8688, 151.2093},
 	}
 
-	initialTemp := 10000.0
+	initialTemp := 100.0
 	coolingRate := 0.99
 	maxIter := 100
 
