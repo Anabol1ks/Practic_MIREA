@@ -7,98 +7,131 @@ import (
 )
 
 // Параметры обучения
-var learningRate = 0.1
+var learningRate = 0.01
 
-// Функция активации (sigmoid)
-func activationFunc(x float64) float64 {
-	return 1.0 / (1.0 + math.Exp(-x))
+// Функция активации (сигмоида)
+func sigmoid(x float64) float64 {
+	return 1 / (1 + math.Exp(-x))
 }
 
-// Производная функции активации (sigmoid)
-func derivActivationFunc(x float64) float64 {
+// Производная сигмоиды
+func sigmoidDerivative(x float64) float64 {
 	return x * (1 - x)
 }
 
-// Инициализация весов
-func initWeights(rows, cols int) [][]float64 {
-	weights := make([][]float64, rows)
-	for i := range weights {
-		weights[i] = make([]float64, cols)
-		for j := range weights[i] {
-			weights[i][j] = rand.Float64()
+// Прямой проход для рекуррентного слоя
+func forwardPass(input, hiddenState []float64, inputWeights, recurrentWeights, outputWeights [][]float64) ([]float64, []float64) {
+	// Обновляем скрытое состояние
+	newHiddenState := make([]float64, len(hiddenState))
+	for i := range newHiddenState {
+		sum := 0.0
+		for j := range input {
+			sum += input[j] * inputWeights[i][j]
+		}
+		for j := range hiddenState {
+			sum += hiddenState[j] * recurrentWeights[i][j]
+		}
+		newHiddenState[i] = sigmoid(sum)
+	}
+
+	// Выход сети
+	output := make([]float64, len(outputWeights))
+	for i := range output {
+		sum := 0.0
+		for j := range newHiddenState {
+			sum += newHiddenState[j] * outputWeights[i][j]
+		}
+		output[i] = sigmoid(sum)
+	}
+	return newHiddenState, output
+}
+
+// Обратное распространение ошибки и обновление весов
+func backwardPass(input, hiddenState, output, target []float64, inputWeights, recurrentWeights, outputWeights [][]float64) {
+	// Ошибка на выходе
+	outputError := make([]float64, len(output))
+	for i := range output {
+		outputError[i] = (target[i] - output[i]) * sigmoidDerivative(output[i])
+	}
+
+	// Ошибка скрытого состояния
+	hiddenError := make([]float64, len(hiddenState))
+	for i := range hiddenState {
+		sum := 0.0
+		for j := range outputError {
+			sum += outputError[j] * outputWeights[j][i]
+		}
+		hiddenError[i] = sum * sigmoidDerivative(hiddenState[i])
+	}
+
+	// Обновляем веса выходного слоя
+	for i := range outputWeights {
+		for j := range outputWeights[i] {
+			outputWeights[i][j] += learningRate * outputError[i] * hiddenState[j]
 		}
 	}
-	return weights
+
+	// Обновляем рекуррентные и входные веса
+	for i := range inputWeights {
+		for j := range inputWeights[i] {
+			inputWeights[i][j] += learningRate * hiddenError[i] * input[j]
+		}
+		for j := range recurrentWeights[i] {
+			recurrentWeights[i][j] += learningRate * hiddenError[i] * hiddenState[j]
+		}
+	}
 }
 
-// Прямое распространение с использованием скрытого состояния
-func forward(input, hiddenState []float64, weightsInput, weightsHidden, weightsOutput []float64) (float64, []float64) {
-	// Обновление скрытого состояния
-	for i := range hiddenState {
-		hiddenState[i] = activationFunc(input[i]*weightsInput[i] + hiddenState[i]*weightsHidden[i])
-	}
+// Обучение сети
+func trainRNN(inputs, targets [][]float64, inputWeights, recurrentWeights, outputWeights [][]float64, epochs int) {
+	hiddenState := make([]float64, len(inputWeights)) // начальное скрытое состояние
 
-	// Вычисление выхода
-	output := 0.0
-	for i := range hiddenState {
-		output += hiddenState[i] * weightsOutput[i]
-	}
-	return activationFunc(output), hiddenState
-}
+	for epoch := 0; epoch < epochs; epoch++ {
+		fmt.Printf("Итерация: %d\n", epoch)
+		for i, input := range inputs {
+			// Прямой проход
+			hiddenState, output := forwardPass(input, hiddenState, inputWeights, recurrentWeights, outputWeights)
 
-// Обратное распространение во времени для обновления весов
-func backward(target, output float64, hiddenState, weightsOutput, weightsHidden, weightsInput []float64) {
-	// Ошибка на выходе
-	outputError := target - output
-	deltaOutput := outputError * derivActivationFunc(output)
+			// Печать значений для отладки
+			fmt.Printf("Вход: %v\n", input)
+			fmt.Printf("Скрытое состояние: %v\n", hiddenState)
+			fmt.Printf("Выход: %v\n", output)
+			fmt.Printf("Цель: %v\n", targets[i])
 
-	// Обновление весов выходного слоя
-	for i := range weightsOutput {
-		weightsOutput[i] += learningRate * deltaOutput * hiddenState[i]
-	}
-
-	// Обратное распространение ошибки в скрытом состоянии
-	for i := range hiddenState {
-		hiddenError := deltaOutput * weightsOutput[i] * derivActivationFunc(hiddenState[i])
-		weightsHidden[i] += learningRate * hiddenError * hiddenState[i]
-		weightsInput[i] += learningRate * hiddenError
+			// Обратное распространение ошибки
+			backwardPass(input, hiddenState, output, targets[i], inputWeights, recurrentWeights, outputWeights)
+		}
 	}
 }
 
 func main() {
-	// Входные данные для логической операции И
+	// Входные данные и целевые значения
 	inputs := [][]float64{
 		{0, 0},
 		{0, 1},
 		{1, 0},
 		{1, 1},
 	}
-
-	// Целевые значения для логической операции И
-	targets := []float64{0, 0, 0, 1}
+	targets := [][]float64{
+		{0},
+		{0},
+		{0},
+		{1},
+	}
 
 	// Инициализация весов
-	weightsInput := []float64{rand.Float64(), rand.Float64()}
-	weightsHidden := []float64{rand.Float64(), rand.Float64()}
-	weightsOutput := []float64{rand.Float64(), rand.Float64()}
-
-	// Инициализация скрытого состояния
-	hiddenState := []float64{0, 0}
+	inputWeights := [][]float64{
+		{rand.Float64(), rand.Float64()},
+		{rand.Float64(), rand.Float64()},
+	}
+	recurrentWeights := [][]float64{
+		{rand.Float64(), rand.Float64()},
+		{rand.Float64(), rand.Float64()},
+	}
+	outputWeights := [][]float64{
+		{rand.Float64(), rand.Float64()},
+	}
 
 	// Обучение сети
-	for epoch := 0; epoch < 100; epoch++ {
-		for i, input := range inputs {
-			// Прямое распространение
-			output, updatedHiddenState := forward(input, hiddenState, weightsInput, weightsHidden, weightsOutput)
-			fmt.Printf("Итерация: %d, шаг: %d, Предсказанный результат: %.4f\n", epoch, i, output)
-
-			// Обратное распространение для обновления весов
-			backward(targets[i], output, updatedHiddenState, weightsOutput, weightsHidden, weightsInput)
-			hiddenState = updatedHiddenState
-
-			fmt.Printf("Цель: %.2f, Ошибка: %.4f\n", targets[i], targets[i]-output)
-			fmt.Printf("Обновленные веса выходного слоя: %v\n", weightsOutput)
-			fmt.Println("-----------------------------")
-		}
-	}
+	trainRNN(inputs, targets, inputWeights, recurrentWeights, outputWeights, 100)
 }
