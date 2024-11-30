@@ -418,3 +418,156 @@ HAVING COUNT(DISTINCT workstation_id) = (SELECT COUNT(*) FROM workstation);
 Этот запрос вернет клиента, который использовал все доступные рабочие станции.
 
 Проверь этот запрос после добавления сессий — он должен вернуть клиента с client_id = 1
+
+
+-- Выборка 
+-- Хранимые процедуры
+CREATE OR REPLACE FUNCTION GetClientSessions(client_id INT)
+RETURNS TABLE(
+    session_id INT,
+    location VARCHAR,
+    tariff_name VARCHAR,
+    price_per_hour DECIMAL,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.session_id, w.location, t.tariff_name, t.price_per_hour, s.start_time, s.end_time
+    FROM session s
+    JOIN workstation w ON s.workstation_id = w.workstation_id
+    JOIN tariff t ON EXISTS (
+        SELECT 1
+        FROM payment p
+        WHERE p.session_id = s.session_id AND p.tariff_id = t.tariff_id
+    )
+    WHERE s.client_id = GetClientSessions.client_id; -- Явно указываем параметр
+END;
+$$;
+
+
+SELECT * FROM GetClientSessions(1);
+
+
+-- функции
+CREATE OR REPLACE FUNCTION GetFullName(full_name_id INT)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    full_name TEXT;
+BEGIN
+    SELECT CONCAT(first_name, ' ', last_name)
+    INTO full_name
+    FROM full_name
+    WHERE full_name.full_name_id = GetFullName.full_name_id; 
+    RETURN full_name;
+END;
+$$;
+
+
+SELECT GetFullName(1);
+
+
+-- триггер
+CREATE OR REPLACE FUNCTION UpdateClientTotalPayment()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE client
+    SET total_payment = COALESCE(total_payment, 0) + NEW.payment_amount
+    WHERE client_id = NEW.client_id;
+
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER AfterPaymentInsert
+AFTER INSERT ON payment
+FOR EACH ROW
+EXECUTE FUNCTION UpdateClientTotalPayment();
+
+ALTER TABLE payment ADD COLUMN client_id INT;
+
+ALTER TABLE payment ADD CONSTRAINT fk_client_id FOREIGN KEY (client_id) REFERENCES client(client_id);
+
+
+ALTER TABLE client ADD COLUMN total_payment DECIMAL DEFAULT 0;
+
+UPDATE client
+SET total_payment = COALESCE((
+    SELECT SUM(payment_amount)
+    FROM payment
+    WHERE payment.client_id = client.client_id
+), 0);
+
+
+INSERT INTO payment (session_id, tariff_id, payment_amount, payment_time, client_id)
+VALUES (1, 1, 500.00, NOW(), 1);
+
+SELECT client_id, total_payment FROM client WHERE client_id = 1;
+
+
+
+-- ещё процедуры 
+CREATE OR REPLACE FUNCTION GetTariffStatistics()
+RETURNS TABLE(
+    tariff_name VARCHAR,
+    total_usage BIGINT,         
+    total_revenue NUMERIC,      
+    average_revenue NUMERIC     
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.tariff_name,
+        COUNT(p.payment_id) AS total_usage,
+        SUM(p.payment_amount) AS total_revenue,
+        AVG(p.payment_amount) AS average_revenue
+    FROM tariff t
+    LEFT JOIN payment p ON t.tariff_id = p.tariff_id
+    GROUP BY t.tariff_name;
+END;
+$$;
+
+SELECT * FROM GetTariffStatistics();
+
+
+CREATE OR REPLACE FUNCTION GetStaffSessions(input_staff_id INT)
+RETURNS TABLE(
+    session_id INT,
+    client_id INT,
+    client_email VARCHAR,
+    workstation_location VARCHAR,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        s.session_id,
+        c.client_id,
+        c.email AS client_email,
+        w.location AS workstation_location,
+        s.start_time,
+        s.end_time
+    FROM session s
+    JOIN workstation w ON s.workstation_id = w.workstation_id
+    JOIN client c ON s.client_id = c.client_id
+    WHERE w.pc_id IN (
+        SELECT pc_service.pc_id
+        FROM pc_service
+        WHERE pc_service.staff_id = input_staff_id
+    );
+END;
+$$;
+
+
+SELECT * FROM GetStaffSessions(1);
