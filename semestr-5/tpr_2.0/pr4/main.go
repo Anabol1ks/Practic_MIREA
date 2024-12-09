@@ -7,212 +7,170 @@ import (
 	"time"
 )
 
-// Размер сетки
+// Параметры алгоритма
 const (
-	GridSize   = 10
-	NumAnts    = 10
-	MaxIters   = 100
-	EvapRate   = 0.5 // Коэффициент испарения
-	Alpha      = 1.0 // Влияние феромона
-	Beta       = 2.0 // Влияние эвристической информации (расстояния)
-	InitPherom = 0.1 // Начальная концентрация феромона
+	alpha = 2.0
+	beta  = 0.00001
+	rho   = 0.000005
 )
 
-// Координаты
-type Point struct {
-	X, Y int
+// Матрица расстояний
+var distances = [][]float64{
+	{math.Inf(1), 4, 7, 8, 3, 9},
+	{4, math.Inf(1), 5, 6, 4, 5},
+	{7, 5, math.Inf(1), 1, 7, 6},
+	{8, 6, 1, math.Inf(1), 2, 3},
+	{3, 4, 7, 2, math.Inf(1), 8},
+	{9, 5, 6, 3, 8, math.Inf(1)},
 }
 
-// Сетка
-type Grid struct {
-	Cells      [][]float64 // Уровень феромонов на ячейках
-	Obstacles  map[Point]bool
-	Start, End Point
-}
+var (
+	numVertices = len(distances)
+	pheromones  = make([][]float64, numVertices)
+	eta         = make([][]float64, numVertices)
+)
 
-// Инициализация сетки
-func NewGrid(start, end Point, obstacles []Point) *Grid {
-	cells := make([][]float64, GridSize)
-	for i := range cells {
-		cells[i] = make([]float64, GridSize)
-		for j := range cells[i] {
-			cells[i][j] = InitPherom
-		}
-	}
-	obstacleMap := make(map[Point]bool)
-	for _, obs := range obstacles {
-		obstacleMap[obs] = true
-	}
-	return &Grid{Cells: cells, Obstacles: obstacleMap, Start: start, End: end}
-}
-
-// Проверка допустимости перемещения
-func (g *Grid) IsValid(point Point) bool {
-	return point.X >= 0 && point.X < GridSize && point.Y >= 0 && point.Y < GridSize && !g.Obstacles[point]
-}
-
-// Генерация соседей
-func (g *Grid) GetNeighbors(point Point) []Point {
-	directions := []Point{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}
-	neighbors := []Point{}
-	for _, dir := range directions {
-		neighbor := Point{point.X + dir.X, point.Y + dir.Y}
-		if g.IsValid(neighbor) {
-			neighbors = append(neighbors, neighbor)
-		}
-	}
-	return neighbors
-}
-
-// Вычисление вероятностей перехода
-func (g *Grid) TransitionProbabilities(current, end Point, neighbors []Point) []float64 {
-	probs := make([]float64, len(neighbors))
-	total := 0.0
-	for i, neighbor := range neighbors {
-		pheromone := g.Cells[neighbor.X][neighbor.Y]
-		distance := math.Sqrt(math.Pow(float64(end.X-neighbor.X), 2) + math.Pow(float64(end.Y-neighbor.Y), 2))
-		// Защита от деления на 0
-		if distance == 0 {
-			distance = 1e-6
-		}
-		// Обновляем вероятность
-		probs[i] = math.Pow(pheromone, Alpha) * math.Pow(1.0/distance, Beta)
-		total += probs[i]
-	}
-	// Нормализация
-	for i := range probs {
-		probs[i] /= total
-	}
-	return probs
-}
-
-// Выбор следующей ячейки
-func ChooseNext(neighbors []Point, probs []float64) Point {
-	r := rand.Float64()
-	cumProb := 0.0
-	for i, prob := range probs {
-		cumProb += prob
-		if r <= cumProb {
-			return neighbors[i]
-		}
-	}
-	return neighbors[len(neighbors)-1]
-}
-
-// Муравьиный алгоритм
-func AntColony(grid *Grid) []Point {
-	bestPath := []Point{}
-	bestLength := GridSize * GridSize
+func init() {
 	rand.Seed(time.Now().UnixNano())
 
-	for iter := 0; iter < MaxIters; iter++ {
-		paths := [][]Point{}
-		foundBetter := false
-
-		for ant := 0; ant < NumAnts; ant++ {
-			current := grid.Start
-			path := []Point{current}
-			visited := map[Point]bool{current: true}
-
-			for current != grid.End {
-				neighbors := grid.GetNeighbors(current)
-				if len(neighbors) == 0 {
-					break
-				}
-				probs := grid.TransitionProbabilities(current, grid.End, neighbors)
-				next := ChooseNext(neighbors, probs)
-
-				if visited[next] {
-					break
-				}
-				visited[next] = true
-				path = append(path, next)
-				current = next
-			}
-
-			// Добавляем путь муравья в список всех путей
-			paths = append(paths, path)
-
-			// Если найден путь до цели, обновляем лучший результат
-			if current == grid.End && len(path) < bestLength {
-				bestLength = len(path)
-				bestPath = path
-				foundBetter = true
-			}
-		}
-
-		// Обновление феромонов
-		for i := range grid.Cells {
-			for j := range grid.Cells[i] {
-				grid.Cells[i][j] *= (1 - EvapRate) // Испарение
-			}
-		}
-		for _, path := range paths {
-			if len(path) == bestLength { // Только лучший путь усиливает феромоны
-				for _, point := range path {
-					grid.Cells[point.X][point.Y] += 1.0 / float64(len(path))
-				}
-			}
-		}
-
-		// Выводим пути, если найден новый лучший путь
-		if foundBetter {
-			fmt.Printf("\nИтерация %d: найден новый лучший путь (%d шагов)\n", iter+1, bestLength)
-			for i, p := range paths {
-				fmt.Printf("Муравей %d: %v\n", i+1, p)
-			}
-		}
-
-		// Общий вывод для итерации
-		fmt.Printf("Итерация %d: лучший путь = %d шагов\n", iter+1, bestLength)
-	}
-
-	return bestPath
-}
-
-// Визуализация пути
-func PrintPath(grid *Grid, path []Point) {
-	display := make([][]rune, GridSize)
-	for i := range display {
-		display[i] = make([]rune, GridSize)
-		for j := range display[i] {
-			if grid.Obstacles[Point{i, j}] {
-				display[i][j] = '#'
+	// Инициализация матрицы феромонов и эвристической информации
+	for i := range pheromones {
+		pheromones[i] = make([]float64, numVertices)
+		eta[i] = make([]float64, numVertices)
+		for j := range pheromones[i] {
+			pheromones[i][j] = 1.0
+			if distances[i][j] != math.Inf(1) {
+				eta[i][j] = 1 / distances[i][j]
 			} else {
-				display[i][j] = '.'
+				eta[i][j] = 0
 			}
 		}
 	}
-	for _, p := range path {
-		display[p.X][p.Y] = '*'
-	}
-	display[grid.Start.X][grid.Start.Y] = 'S'
-	display[grid.End.X][grid.End.Y] = 'E'
+}
 
-	for _, row := range display {
-		fmt.Println(string(row))
+// Расчет вероятностей перехода
+func calculateProbabilities(currentVertex int, unvisited []int) []float64 {
+	numerator := make([]float64, len(unvisited))
+	denominator := 0.0
+
+	for i, v := range unvisited {
+		numerator[i] = math.Pow(pheromones[currentVertex][v], alpha) * math.Pow(eta[currentVertex][v], beta)
+		denominator += numerator[i]
+	}
+
+	probabilities := make([]float64, len(unvisited))
+	for i := range probabilities {
+		probabilities[i] = numerator[i] / denominator
+	}
+	return probabilities
+}
+
+// Выбор следующей вершины на основе вероятностей
+func chooseNextVertex(probabilities []float64, unvisited []int) int {
+	r := rand.Float64()
+	cumulative := 0.0
+	for i, p := range probabilities {
+		cumulative += p
+		if r <= cumulative {
+			return unvisited[i]
+		}
+	}
+	return unvisited[len(unvisited)-1]
+}
+
+// Маршрут муравья
+func antTravel(startVertex int) ([]int, float64) {
+	currentVertex := startVertex
+	unvisited := make([]int, 0, numVertices-1)
+	for i := 0; i < numVertices; i++ {
+		if i != currentVertex {
+			unvisited = append(unvisited, i)
+		}
+	}
+
+	path := []int{currentVertex}
+	totalLength := 0.0
+
+	for len(unvisited) > 0 {
+		probabilities := calculateProbabilities(currentVertex, unvisited)
+		nextVertex := chooseNextVertex(probabilities, unvisited)
+
+		totalLength += distances[currentVertex][nextVertex]
+		path = append(path, nextVertex)
+		currentVertex = nextVertex
+
+		// Удаляем посещенную вершину из списка
+		for i, v := range unvisited {
+			if v == currentVertex {
+				unvisited = append(unvisited[:i], unvisited[i+1:]...)
+				break
+			}
+		}
+	}
+
+	// Возврат к стартовой вершине
+	path = append(path, startVertex)
+	totalLength += distances[currentVertex][startVertex]
+
+	return path, totalLength
+}
+
+// Обновление феромонов
+func updatePheromones(paths [][]int, lengths []float64) {
+	for i := range pheromones {
+		for j := range pheromones[i] {
+			pheromones[i][j] *= (1 - rho)
+		}
+	}
+
+	for k, path := range paths {
+		deltaTau := 1 / lengths[k]
+		for i := 0; i < len(path)-1; i++ {
+			from, to := path[i], path[i+1]
+			pheromones[from][to] += deltaTau
+			pheromones[to][from] += deltaTau
+		}
 	}
 }
 
-func GenerateObstacles(numObstacles int) []Point {
-	rand.Seed(time.Now().UnixNano())
-	obstacles := []Point{}
-	for i := 0; i < numObstacles; i++ {
-		x := rand.Intn(GridSize)
-		y := rand.Intn(GridSize)
-		obstacle := Point{x, y}
-		obstacles = append(obstacles, obstacle)
+// Основная функция муравьиного алгоритма
+func antColonyOptimization(numAnts, numIterations, startVertex int) ([]int, float64) {
+	var bestPath []int
+	bestLength := math.Inf(1)
+
+	for iteration := 0; iteration < numIterations; iteration++ {
+		paths := make([][]int, 0, numAnts)
+		lengths := make([]float64, 0, numAnts)
+
+		fmt.Printf("\nИтерация %d:\n", iteration+1)
+
+		for ant := 0; ant < numAnts; ant++ {
+			path, length := antTravel(startVertex)
+			paths = append(paths, path)
+			lengths = append(lengths, length)
+
+			fmt.Printf("  Муравей %d: Путь = %v, Длина = %.2f\n", ant+1, path, length)
+		}
+
+		updatePheromones(paths, lengths)
+
+		// Обновление глобального лучшего пути
+		for i, length := range lengths {
+			if length < bestLength {
+				bestLength = length
+				bestPath = paths[i]
+			}
+		}
 	}
-	return obstacles
+
+	return bestPath, bestLength
 }
 
 func main() {
-	start := Point{9, 0}
-	end := Point{0, 9}
-	obstacles := GenerateObstacles(0)
+	numAnts := 6
+	numIterations := 1000
+	startVertex := 0
 
-	grid := NewGrid(start, end, obstacles)
-	bestPath := AntColony(grid)
-	fmt.Println("Лучший путь найден:")
-	PrintPath(grid, bestPath)
+	bestPath, bestLength := antColonyOptimization(numAnts, numIterations, startVertex)
+	fmt.Printf("\nЛучший путь: %v\nЛучшая длина: %.2f\n", bestPath, bestLength)
 }

@@ -571,3 +571,126 @@ $$;
 
 
 SELECT * FROM GetStaffSessions(1);
+
+
+-- ещё функции 
+
+CREATE OR REPLACE FUNCTION GetTariffStatistics()
+RETURNS TABLE(
+    tariff_name VARCHAR,
+    total_usage BIGINT,         -- Тип bigint для COUNT
+    total_revenue NUMERIC,      -- Тип numeric для SUM
+    average_revenue NUMERIC     -- Тип numeric для AVG
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        t.tariff_name,
+        COUNT(p.payment_id) AS total_usage,
+        SUM(p.payment_amount) AS total_revenue,
+        AVG(p.payment_amount) AS average_revenue
+    FROM tariff t
+    LEFT JOIN payment p ON t.tariff_id = p.tariff_id
+    GROUP BY t.tariff_name;
+END;
+$$;
+
+SELECT * FROM GetTariffStatistics();
+
+CREATE OR REPLACE FUNCTION GetStaffSessions(input_staff_id INT)
+RETURNS TABLE(
+    session_id INT,
+    client_id INT,
+    client_email VARCHAR,
+    workstation_location VARCHAR,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        s.session_id,
+        c.client_id,
+        c.email AS client_email,
+        w.location AS workstation_location,
+        s.start_time,
+        s.end_time
+    FROM session s
+    JOIN workstation w ON s.workstation_id = w.workstation_id
+    JOIN client c ON s.client_id = c.client_id
+    WHERE w.pc_id IN (
+        SELECT pc_service.pc_id
+        FROM pc_service
+        WHERE pc_service.staff_id = input_staff_id
+    );
+END;
+$$;
+
+
+SELECT * FROM GetStaffSessions(5);
+
+
+-- Ещё триггеры
+-- Функция триггера
+CREATE OR REPLACE FUNCTION UpdateLastServiceDate()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE pc
+    SET last_service_date = NEW.service_date
+    WHERE pc_id = NEW.pc_id;
+
+    RETURN NEW;
+END;
+$$;
+
+-- Создание триггера
+CREATE TRIGGER AfterServiceInsert
+AFTER INSERT ON pc_service
+FOR EACH ROW
+EXECUTE FUNCTION UpdateLastServiceDate();
+
+
+ALTER TABLE pc ADD COLUMN last_service_date DATE;
+
+INSERT INTO pc_service (pc_id, staff_id, service_date, service_type, comments)
+VALUES (1, 2, '2024-12-07', 'Diagnostics', 'Routine check-up');
+
+
+-- Функция триггера
+-- Функция триггера
+CREATE OR REPLACE FUNCTION DeleteClientSessions()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Удаляем записи из таблицы payment, связанные с сессиями клиента
+    DELETE FROM payment
+    WHERE session_id IN (
+        SELECT session_id
+        FROM session
+        WHERE client_id = OLD.client_id
+    );
+
+    -- Удаляем сессии клиента
+    DELETE FROM session
+    WHERE client_id = OLD.client_id;
+
+    RETURN OLD;
+END;
+$$;
+
+-- Создание триггера
+CREATE TRIGGER BeforeClientDelete
+BEFORE DELETE ON client
+FOR EACH ROW
+EXECUTE FUNCTION DeleteClientSessions();
+
+
+
+DELETE FROM client WHERE client_id = 1;
