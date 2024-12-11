@@ -10,8 +10,8 @@ import (
 // Параметры алгоритма
 const (
 	alpha = 2.0
-	beta  = 0.00001
-	rho   = 0.000005
+	beta  = 1.0
+	rho   = 0.15
 )
 
 // Матрица расстояний
@@ -167,8 +167,8 @@ func antColonyOptimization(numAnts, numIterations, startVertex int) ([]int, floa
 }
 
 func main() {
-	numAnts := 6
-	numIterations := 1000
+	numAnts := 5
+	numIterations := 100
 	startVertex := 0
 
 	bestPath, bestLength := antColonyOptimization(numAnts, numIterations, startVertex)
