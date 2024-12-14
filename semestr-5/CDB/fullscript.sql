@@ -693,3 +693,92 @@ EXECUTE FUNCTION DeleteClientSessions();
 
 
 DELETE FROM client WHERE client_id = 1;
+
+
+
+-- 6
+-- 1.Открытие окна при помощи инструкции «OVER()»
+SELECT 
+    SUM(payment_amount) OVER () AS total_payment
+FROM payment;
+-- 2.Применение инструкции «PARTITON BY()»
+SELECT 
+    SUM(payment_amount) OVER 
+	(PARTITION BY client_id) AS client_total_payment
+FROM payment;
+-- 3.Применение «ORDER BY()»
+SELECT 
+    payment_time, 
+    SUM(payment_amount) OVER (ORDER BY payment_time) AS running_total
+FROM payment;
+-- 4.Применение агрегатных функций «AVG()» и «COUNT()»
+SELECT 
+    tariff_id, 
+    AVG(payment_amount) OVER (PARTITION BY tariff_id) AS avg_payment,
+    COUNT(*) OVER (PARTITION BY tariff_id) AS count_payments
+FROM payment;
+
+-- 5.Применение агрегатных функций «SUM()» и «COUNT()»
+SELECT 
+    SUM(payment_amount) OVER (PARTITION BY client_id) AS total_payment,
+    COUNT(*) OVER (PARTITION BY client_id) AS count_payments
+FROM payment;
+-- 6.Применение агрегатных функций «MAX()» и «COUNT()»
+SELECT 
+    MAX(payment_amount) OVER (PARTITION BY client_id) AS max_payment,
+    COUNT(*) OVER (PARTITION BY client_id) AS count_payments
+FROM payment;
+
+-- 7.Применение агрегатных функций «MIN ()» и «COUNT()»
+SELECT 
+    MIN(payment_amount) OVER (PARTITION BY client_id) AS min_payment,
+    COUNT(*) OVER (PARTITION BY client_id) AS count_payments
+FROM payment;
+
+-- 8.Применение ранжирующей функции «ROW_NUMBER»
+SELECT 
+    payment_amount, 
+    ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY payment_amount DESC) AS row_num
+FROM payment;
+
+-- 9.Применение ранжирующей функции «RANK»
+SELECT 
+    payment_amount, 
+    RANK() OVER (PARTITION BY client_id ORDER BY payment_amount DESC) AS rank
+FROM payment;
+
+-- 10.Применение ранжирующей функции «DENSE_RANK»
+SELECT 
+    payment_amount, 
+    DENSE_RANK() OVER (PARTITION BY client_id ORDER BY payment_amount DESC) AS dense_rank
+FROM payment;
+
+-- 11.Применение ранжирующей функции «NTILE()»
+SELECT 
+    payment_amount, 
+    NTILE(4) OVER (PARTITION BY client_id ORDER BY payment_amount DESC) AS quartile
+FROM payment;
+
+-- 12.Применение функции смещение «LAG()»
+SELECT 
+    payment_amount, 
+    LAG(payment_amount) OVER (PARTITION BY client_id ORDER BY payment_time) AS previous_payment
+FROM payment;
+
+-- 13.Применение функции смещение «LEAD()»
+SELECT 
+    payment_amount, 
+    LEAD(payment_amount) OVER (PARTITION BY client_id ORDER BY payment_time) AS next_payment
+FROM payment;
+
+-- 14. Применение функции смещение «FIRST_VALUE()»
+SELECT 
+    payment_amount, 
+    FIRST_VALUE(payment_amount) OVER (PARTITION BY client_id ORDER BY payment_time) AS first_payment
+FROM payment;
+
+-- 15.Применение функции смещение «LAST_VALUE()»
+SELECT 
+    payment_amount, 
+    LAST_VALUE(payment_amount) OVER (PARTITION BY client_id ORDER BY payment_time ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_payment
+FROM payment;
