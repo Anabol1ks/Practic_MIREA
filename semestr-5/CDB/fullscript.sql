@@ -663,7 +663,6 @@ VALUES (1, 2, '2024-12-07', 'Diagnostics', 'Routine check-up');
 
 
 -- Функция триггера
--- Функция триггера
 CREATE OR REPLACE FUNCTION DeleteClientSessions()
 RETURNS TRIGGER
 LANGUAGE plpgsql
