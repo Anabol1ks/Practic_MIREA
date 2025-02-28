@@ -1,0 +1,146 @@
+; Tue Dec 17 00:50:37 MSK 2024
+; 
+;+ (version "3.2")
+;+ (build "Build 355")
+
+([KB_700239_Instance_55] of  %D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D1%8B%D0%B5+%D1%8F%D0%B7%D1%8B%D0%BA%D0%B8
+
+	(%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5 "GoLang")
+	(%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C_%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F "микросервисы")
+	(%D1%82%D0%B8%D0%BF_%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0 "скомпилированный"))
+
+([KB_700239_Instance_56] of  %D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D1%8B%D0%B5+%D1%8F%D0%B7%D1%8B%D0%BA%D0%B8
+
+	(%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5 "Python")
+	(%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C_%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F "telegramBot")
+	(%D1%82%D0%B8%D0%BF_%D1%8F%D0%B7%D1%8B%D0%BA%D0%B0 "скомпилированный"))
+
+([KB_700239_Instance_57] of  %D0%9A%D1%83%D1%80%D1%81%D1%8B
+
+	(%D0%94%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%8C "1 месяц")
+	(%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5 "GoLang база")
+	(%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5 "Обучение основам языка программирования GoLang")
+	(%D0%9F%D0%BB%D0%B0%D0%BD_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D0%B9
+		[KB_700239_Instance_59]
+		[OnlineCursePr_Instance_1])
+	(%D0%9F%D1%80%D0%B5%D0%BF%D0%BE%D0%B4%D0%B0%D1%8E%D1%82 [KB_700239_Instance_69])
+	(%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D1%8B%D0%B9_%D1%8F%D0%B7%D1%8B%D0%BA [KB_700239_Instance_55])
+	(%D0%A3%D1%80%D0%BE%D0%B2%D0%B5%D0%BD%D1%8C_%D1%81%D0%BB%D0%BE%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B8 "лёгкая")
+	(%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82
+		"онлайн"
+		"очно"))
+
+([KB_700239_Instance_59] of  %D0%97%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F
+
+	(%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B "Лекция")
+	(%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F [KB_700239_Instance_66])
+	(%D1%82%D0%B5%D0%BC%D0%B0_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F "Введение")
+	(%D1%82%D0%B5%D1%81%D1%82%D1%8B [KB_700239_Instance_65]))
+
+([KB_700239_Instance_61] of  %3AINSTANCE-ANNOTATION
+
+	(%3AANNOTATED-INSTANCE [KB_700239_Instance_57])
+	(%3ACREATION-TIMESTAMP "2024.09.16 15:44:03.485 MSK")
+	(%3ACREATOR "Grigo"))
+
+([KB_700239_Instance_62] of  %3AINSTANCE-ANNOTATION
+
+	(%3AANNOTATED-INSTANCE [KB_700239_Instance_57])
+	(%3ACREATION-TIMESTAMP "2024.09.16 15:44:07.398 MSK")
+	(%3ACREATOR "Grigo"))
+
+([KB_700239_Instance_64] of  %D0%97%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F
+
+	(%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B "Лекция")
+	(%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F [KB_700239_Instance_66])
+	(%D1%82%D0%B5%D0%BC%D0%B0_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F "Основы Python")
+	(%D1%82%D0%B5%D1%81%D1%82%D1%8B [OnlineCursePr_Instance_2]))
+
+([KB_700239_Instance_65] of  %D0%A2%D0%B5%D1%81%D1%82%D1%8B
+
+	(%D0%B2%D0%B0%D1%80%D0%B8%D0%B0%D0%BD%D1%82%D1%8B_%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D0%BE%D0%B2
+		"fmt.Println(a)"
+		"fmt.Println(\"a\")"
+		"print(a)"
+		"fPrint(a)")
+	(%D0%B2%D0%BE%D0%BF%D1%80%D0%BE%D1%81%D1%8B "Как вывести значение переменной a = 101? Go")
+	(%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B0 2)
+	(%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5_%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D1%8B "fmt.Println(a)"))
+
+([KB_700239_Instance_66] of  %D0%97%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F
+
+	(%D0%9D%D0%BE%D0%BC%D0%B5%D1%80+%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F 1)
+	(%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B0 1)
+	(%D1%82%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F
+		"Использовать цикл for"
+		"Использовать только 1 цикл")
+	(%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8 "Вывести в консоль числа от 1 до 10."))
+
+([KB_700239_Instance_67] of  %D0%A3%D1%87%D0%B0%D1%89%D0%B8%D0%B5%D1%81%D1%8F
+
+	(%D0%B8%D0%BC%D1%8F "Антон")
+	(%D0%9F%D1%80%D0%BE%D1%85%D0%BE%D0%B4%D0%B8%D1%82_%D0%BA%D1%83%D1%80%D1%81%D1%8B [KB_700239_Instance_57])
+	(%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D1%87%D1%82%D0%B0 "aaaaaaa@dd.dd"))
+
+([KB_700239_Instance_68] of  %D0%A3%D1%87%D0%B0%D1%89%D0%B8%D0%B5%D1%81%D1%8F
+
+	(%D0%B8%D0%BC%D1%8F "Толик")
+	(%D0%9F%D1%80%D0%BE%D1%85%D0%BE%D0%B4%D0%B8%D1%82_%D0%BA%D1%83%D1%80%D1%81%D1%8B [KB_700239_Instance_57])
+	(%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D1%87%D1%82%D0%B0 "tola.1@ru.ru"))
+
+([KB_700239_Instance_69] of  %D0%9F%D1%80%D0%B5%D0%BF%D0%BE%D0%B4%D0%B0%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D0%B8
+
+	(%D0%B8%D0%BC%D1%8F "Генадий")
+	(%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C_%D1%8D%D0%BA%D1%81%D0%BF%D0%B5%D1%80%D1%82%D0%BD%D0%BE%D1%81%D1%82%D0%B8 "GoLang")
+	(%D1%81%D1%82%D0%B0%D1%82%D1%83%D1%81 "активный"))
+
+([OnlineCursePr_Instance_0] of  %3AINSTANCE-ANNOTATION
+
+	(%3AANNOTATED-INSTANCE [KB_700239_Instance_57])
+	(%3ACREATION-TIMESTAMP "2024.09.23 22:15:06.212 MSK")
+	(%3ACREATOR "Grigo"))
+
+([OnlineCursePr_Instance_1] of  %D0%97%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F
+
+	(%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B "Лекция")
+	(%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F
+		[KB_700239_Instance_66]
+		[OnlineCursePr_Instance_10000])
+	(%D1%82%D0%B5%D0%BC%D0%B0_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D1%8F "Основы Go")
+	(%D1%82%D0%B5%D1%81%D1%82%D1%8B [KB_700239_Instance_65]))
+
+([OnlineCursePr_Instance_10000] of  %D0%97%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F
+
+	(%D0%9D%D0%BE%D0%BC%D0%B5%D1%80+%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F 2)
+	(%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B0 3)
+	(%D1%82%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F
+		"Использовать цикл for"
+		"Использовать только 1 цикл"
+		"Использовать sort")
+	(%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D0%B5_%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8 "Вывести в консоль числа от 1 до 10, потом вывести его в одну строчку в обратном порядке"))
+
+([OnlineCursePr_Instance_2] of  %D0%A2%D0%B5%D1%81%D1%82%D1%8B
+
+	(%D0%B2%D0%B0%D1%80%D0%B8%D0%B0%D0%BD%D1%82%D1%8B_%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D0%BE%D0%B2
+		"fmt.Println(a) "
+		"fmt.Println(\"a\")"
+		" print(a)"
+		" fPrint(a)")
+	(%D0%B2%D0%BE%D0%BF%D1%80%D0%BE%D1%81%D1%8B "Как вывести значение переменной a = 101? Python")
+	(%D0%BE%D1%86%D0%B5%D0%BD%D0%BA%D0%B0 2)
+	(%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5_%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D1%8B "print(a)"))
+
+([OnlineCursePr_Instance_20001] of  %D0%9A%D1%83%D1%80%D1%81%D1%8B
+
+	(%D0%94%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D1%8C "1 месяц")
+	(%D0%9D%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5 "Python база")
+	(%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5 "Обучение основам языка программирования Pythoon")
+	(%D0%9F%D0%BB%D0%B0%D0%BD_%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D0%B9
+		[KB_700239_Instance_59]
+		[KB_700239_Instance_64])
+	(%D0%9F%D1%80%D0%B5%D0%BF%D0%BE%D0%B4%D0%B0%D1%8E%D1%82 [KB_700239_Instance_69])
+	(%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D1%8B%D0%B9_%D1%8F%D0%B7%D1%8B%D0%BA [KB_700239_Instance_56])
+	(%D0%A3%D1%80%D0%BE%D0%B2%D0%B5%D0%BD%D1%8C_%D1%81%D0%BB%D0%BE%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D0%B8 "лёгкая")
+	(%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82
+		"онлайн"
+		"очно"))
