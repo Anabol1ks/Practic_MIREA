@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 104120578}
   - component: {fileID: 104120577}
   - component: {fileID: 104120576}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -228,6 +228,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &250658877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 250658878}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &250658878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250658877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.911, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1609331973}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,6 +271,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -314,12 +346,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23429382, y: 0, z: 0, w: 0.9721658}
-  m_LocalPosition: {x: 0, y: 17.9, z: -44.7}
+  m_LocalRotation: {x: 0.23429382, y: -0, z: -0, w: 0.9721658}
+  m_LocalPosition: {x: 0, y: 15.804, z: -44.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1609331973}
   m_LocalEulerAnglesHint: {x: 27.1, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -365,6 +397,31 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4465d188e1f66ef40b3d05d6727b1269, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseSensitivity: 175
+  playerBody: {fileID: 1609331973}
+  isThirdPerson: 0
+  toggleKey: 118
+  headTransform: {fileID: 250658878}
+  thirdPersonOffset: {x: 0, y: 2, z: -5}
+  cameraCollisionRadius: 0.3
+  minDistance: 1
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 128
+  cameraSmoothness: 5
+  verticalClamp: {x: -40, y: 80}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,9 +580,16 @@ MonoBehaviour:
   runSpeed: 10
   jumpForce: 7
   airControl: 0.5
-  flySpeed: 15
-  dashSpeed: 30
+  flyHoverForce: 2.3
+  flyAcceleration: 15
+  maxFlySpeed: 25
+  flightDrag: 2
+  pitchSpeed: 100
+  rollSpeed: 100
+  yawSpeed: 100
   flyKey: 102
+  stability: 10
+  flightBoostMultiplier: 1.5
 --- !u!54 &1609331969
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -534,7 +598,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1609331967}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -641,7 +705,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.096, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 330585546}
+  - {fileID: 250658878}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3123503002472258428
@@ -741,7 +807,7 @@ GameObject:
   - component: {fileID: 6800123749378410403}
   - component: {fileID: 7697430892870279945}
   - component: {fileID: 7697430892870279946}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -793,7 +859,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7409580737203664519}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -804,7 +870,6 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 104120579}
   - {fileID: 1609331973}
