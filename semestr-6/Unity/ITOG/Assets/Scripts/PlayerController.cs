@@ -23,6 +23,9 @@ public class PlayerControllerItog : MonoBehaviour
     [SerializeField] private float stability = 10f; // Параметр стабилизации: скорость возвращения к исходной ориентации
     [SerializeField] private float flightBoostMultiplier = 1.5f; // Множитель ускорения в полёте при зажатом Shift
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+
     private Rigidbody rb;
     private bool isFlying = false;
     private bool isGrounded;
@@ -41,6 +44,12 @@ public class PlayerControllerItog : MonoBehaviour
     {
         HandleJump();
         HandleFlightToggle();
+        if(animator == null) return;
+    
+        // Пример: передача параметров в аниматор
+        animator.SetFloat("Speed", rb.linearVelocity.magnitude);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isFlying", isFlying);
     }
 
     void FixedUpdate()
