@@ -5,12 +5,7 @@ public class CameraController : MonoBehaviour
     [Header("Настройки камеры")]
     public float mouseSensitivity = 100f;
     public Transform playerBody;
-    public bool isThirdPerson = false;
-    public KeyCode toggleKey = KeyCode.V;
-
-    [Header("Параметры первого лица")]
-    public Transform headTransform;
-
+    
     [Header("Параметры третьего лица")]
     public Vector3 thirdPersonOffset = new Vector3(0, 1.5f, -5f);
     public float cameraCollisionRadius = 0.3f;
@@ -20,7 +15,6 @@ public class CameraController : MonoBehaviour
     public Vector2 verticalClamp = new Vector2(-40, 80);
 
     private float xRotation = 0f;
-    private float yRotation = 0f;
     private Vector3 targetPosition;
     private Quaternion targetRotation;
 
@@ -32,37 +26,10 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
-        {
-            isThirdPerson = !isThirdPerson;
-        }
-
-        if (!isThirdPerson)
-        {
-            FirstPersonLogic();
-        }
-        else
-        {
-            ThirdPersonLogic();
-        }
+        HandleCameraMovement();
     }
 
-    void FirstPersonLogic()
-    {
-        if (headTransform == null) return;
-
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        playerBody.Rotate(Vector3.up * mouseX);
-        transform.position = headTransform.position;
-    }
-
-    void ThirdPersonLogic()
+    void HandleCameraMovement()
     {
         // Обработка ввода
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;

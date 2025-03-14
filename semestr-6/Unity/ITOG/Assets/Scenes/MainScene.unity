@@ -269,6 +269,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &393513992 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6333230182088108438, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
+  m_PrefabInstance: {fileID: 913144176}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,15 +444,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 100
   playerBody: {fileID: 1223345674}
-  isThirdPerson: 0
-  toggleKey: 118
-  headTransform: {fileID: 75836052}
   thirdPersonOffset: {x: 0, y: 1.5, z: -5}
   cameraCollisionRadius: 0.3
   minDistance: 1
   collisionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   cameraSmoothness: 5
   verticalClamp: {x: -40, y: 80}
 --- !u!114 &512378747
@@ -614,11 +616,15 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 462a46eee4c2bbd4290380336982df90, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 4521740735528534501, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
-      insertIndex: -1
+    - targetCorrespondingSourceObject: {fileID: 6333230182088108438, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
+      insertIndex: 0
       addedObject: {fileID: 1112143725}
     - targetCorrespondingSourceObject: {fileID: 1168844273262885511, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
       insertIndex: 0
@@ -653,12 +659,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1112143724}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 2.59}
+  m_LocalRotation: {x: 0.001570986, y: 0.70710504, z: -0.0015717304, w: 0.70710504}
+  m_LocalPosition: {x: -0.11453551, y: 0.0056671817, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1991571980}
+  m_Father: {fileID: 393513992}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1112143726
 BoxCollider:
@@ -770,6 +776,7 @@ MonoBehaviour:
   stability: 10
   flightBoostMultiplier: 1.5
   animator: {fileID: 18247715}
+  visualModel: {fileID: 18247716}
 --- !u!1 &1874838154
 GameObject:
   m_ObjectHideFlags: 0
@@ -823,11 +830,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.39532027
   m_Center: {x: -0.20051461, y: -0.02148074, z: -0.021480203}
---- !u!4 &1991571980 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4521740735528534501, guid: 8b0c3e0711a17db4ba21f44788fc9ac8, type: 3}
-  m_PrefabInstance: {fileID: 913144176}
-  m_PrefabAsset: {fileID: 0}
 --- !u!33 &3123503002472258428
 MeshFilter:
   m_ObjectHideFlags: 0

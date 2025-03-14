@@ -26,6 +26,8 @@ public class PlayerControllerItog : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
+    [Header("Model References")]
+    [SerializeField] private Transform visualModel; // Перетащите сюда дочерний объект с мешом
     private Rigidbody rb;
     private bool isFlying = false;
     private bool isGrounded;
@@ -97,39 +99,38 @@ public class PlayerControllerItog : MonoBehaviour
         rb.linearDamping = flightDrag;
         rb.angularDamping = flightDrag * 2;
 
-        // Поддержание высоты (парение)
-        rb.AddForce(Vector3.up * flyHoverForce, ForceMode.Acceleration);
+        // УДАЛЕНО: Поддержание высоты (парение)
+        // rb.AddForce(Vector3.up * flyHoverForce, ForceMode.Acceleration);
 
         // Если зажат Shift, увеличиваем скорость полёта
         float boost = Input.GetKey(KeyCode.LeftShift) ? flightBoostMultiplier : 1f;
-        // Расчет целевой скорости на основе направления и максимальной скорости полёта с учетом ускорения
+        // Расчет целевой скорости с учетом вертикального ввода (ось Z)
         Vector3 targetVelocity = (transform.forward * flightInput.y +
-                                  transform.right * flightInput.x +
-                                  transform.up * flightInput.z) * maxFlySpeed * boost;
+                                transform.right * flightInput.x +
+                                transform.up * flightInput.z) * maxFlySpeed * boost;
 
         // Вычисляем ускорение для достижения целевой скорости
         Vector3 acceleration = (targetVelocity - rb.linearVelocity) * flyAcceleration;
         rb.AddForce(acceleration, ForceMode.Acceleration);
 
-        // Обработка поворотов с использованием мыши и клавиш Q/E для крена
+        // Остальная часть кода без изменений
         float pitch = Input.GetAxis("Mouse Y") * pitchSpeed * Time.fixedDeltaTime;
         float yaw = Input.GetAxis("Mouse X") * yawSpeed * Time.fixedDeltaTime;
         float roll = Input.GetKey(KeyCode.Q) ? rollSpeed * Time.fixedDeltaTime :
-                     Input.GetKey(KeyCode.E) ? -rollSpeed * Time.fixedDeltaTime : 0f;
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, roll);
-        rb.MoveRotation(rb.rotation * rotation);
+                    Input.GetKey(KeyCode.E) ? -rollSpeed * Time.fixedDeltaTime : 0f;
 
-        // Стабилизация: если нет ввода – корректируем вращение
+        visualModel.localRotation *= Quaternion.Euler(pitch, yaw, roll);
+
         if (flightInput.magnitude < 0.1f)
         {
-            // Плавно снижаем угловую скорость, чтобы прекратить кручение
-            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * stability);
-
-            // Вычисляем вектор для выравнивания "верха" с мировым вверх
-            Vector3 currentUp = transform.up;
-            Vector3 correctionTorque = Vector3.Cross(currentUp, Vector3.up) * stability;
-            rb.AddTorque(correctionTorque, ForceMode.Acceleration);
+            visualModel.localRotation = Quaternion.Slerp(
+                visualModel.localRotation,
+                Quaternion.identity,
+                Time.fixedDeltaTime * stability
+            );
         }
+
+        rb.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
     }
 
     // ------------------- Обработка прыжка -------------------
@@ -149,15 +150,14 @@ public class PlayerControllerItog : MonoBehaviour
             isFlying = !isFlying;
             rb.useGravity = !isFlying;
             rb.linearDamping = isFlying ? flightDrag : originalDrag;
-            // В режиме полёта убираем ограничения вращения
-            rb.constraints = isFlying ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeRotation;
+            
+            // Всегда замораживаем вращение физического тела
+            rb.constraints = isFlying ? 
+                RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ :
+                RigidbodyConstraints.FreezeRotation;
 
-            if (!isFlying)
-            {
-                // При отключении полёта сбрасываем угловую скорость и сохраняем горизонтальную скорость
-                rb.angularVelocity = Vector3.zero;
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-            }
+            // Сбрасываем вращение модели при переключении
+            visualModel.localRotation = Quaternion.identity;
         }
     }
 
@@ -167,6 +167,13 @@ public class PlayerControllerItog : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+        }
+
+        // При любом столкновении сбрасываем вращение модели
+        if (isFlying)
+        {
+            visualModel.localRotation = Quaternion.identity;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 
