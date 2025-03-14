@@ -443,15 +443,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 150
-  target: {fileID: 1223345674}
-  offset: {x: 0, y: 1.5, z: -5}
-  smoothSpeed: 10
-  pitchClamp: {x: -40, y: 80}
-  collisionRadius: 0.3
+  playerBody: {fileID: 1223345674}
+  thirdPersonOffset: {x: 0, y: 1.5, z: -5}
+  cameraCollisionRadius: 0.3
   minDistance: 1
   collisionMask:
     serializedVersion: 2
     m_Bits: 128
+  cameraSmoothness: 5
+  verticalClamp: {x: -40, y: 80}
 --- !u!114 &512378747
 MonoBehaviour:
   m_ObjectHideFlags: 0
