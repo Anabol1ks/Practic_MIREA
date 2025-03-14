@@ -442,16 +442,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4465d188e1f66ef40b3d05d6727b1269, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 100
-  playerBody: {fileID: 1223345674}
-  thirdPersonOffset: {x: 0, y: 1.5, z: -5}
-  cameraCollisionRadius: 0.3
+  mouseSensitivity: 150
+  target: {fileID: 1223345674}
+  offset: {x: 0, y: 1.5, z: -5}
+  smoothSpeed: 10
+  pitchClamp: {x: -40, y: 80}
+  collisionRadius: 0.3
   minDistance: 1
   collisionMask:
     serializedVersion: 2
     m_Bits: 128
-  cameraSmoothness: 5
-  verticalClamp: {x: -40, y: 80}
 --- !u!114 &512378747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,13 +770,12 @@ MonoBehaviour:
   maxFlySpeed: 25
   flightDrag: 2
   pitchSpeed: 100
-  rollSpeed: 100
   yawSpeed: 100
-  flyKey: 102
+  rollSpeed: 100
   stability: 10
   flightBoostMultiplier: 1.5
+  flightToggleKey: 102
   animator: {fileID: 18247715}
-  visualModel: {fileID: 18247716}
 --- !u!1 &1874838154
 GameObject:
   m_ObjectHideFlags: 0

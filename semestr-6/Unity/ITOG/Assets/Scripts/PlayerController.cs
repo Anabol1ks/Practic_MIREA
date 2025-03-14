@@ -1,139 +1,148 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerControllerItog : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    // ------------------- Параметры движения -------------------
-    [Header("Movement")]
-    [SerializeField] private float walkSpeed = 5f; // Скорость ходьбы персонажа (единиц в секунду)
-    [SerializeField] private float runSpeed = 10f; // Скорость бега (при зажатом Shift)
-    [SerializeField] private float jumpForce = 7f; // Сила прыжка (импульс вверх)
-    [SerializeField] private float airControl = 0.5f; // Коэффициент контроля в воздухе (чем выше – тем более отзывчиво)
+    // ------------- Настройки наземного движения -------------
+    [Header("Наземное движение")]
+    [SerializeField] private float walkSpeed = 5f;           // Скорость ходьбы
+    [SerializeField] private float runSpeed = 10f;           // Скорость бега (при зажатом Shift)
+    [SerializeField] private float jumpForce = 7f;           // Сила прыжка
+    [SerializeField] private float airControl = 0.5f;        // Коэффициент контроля в воздухе
 
-    // ------------------- Параметры полёта -------------------
-    [Header("Flight Settings")]
-    [SerializeField] private float flyHoverForce = 9.8f; // Сила парения, компенсирующая гравитацию
-    [SerializeField] private float flyAcceleration = 15f; // Ускорение при изменении направления полёта
-    [SerializeField] private float maxFlySpeed = 25f; // Максимальная скорость полёта
-    [SerializeField] private float flightDrag = 2f; // Сопротивление воздуха при полёте (замедление)
-    [SerializeField] private float pitchSpeed = 100f; // Скорость наклона (pitch) при поворотах
-    [SerializeField] private float rollSpeed = 100f; // Скорость крена (roll) при поворотах
-    [SerializeField] private float yawSpeed = 100f; // Скорость рыскания (yaw) при поворотах
-    [SerializeField] private KeyCode flyKey = KeyCode.F; // Клавиша для переключения режима полёта
-    [SerializeField] private float stability = 10f; // Параметр стабилизации: скорость возвращения к исходной ориентации
-    [SerializeField] private float flightBoostMultiplier = 1.5f; // Множитель ускорения в полёте при зажатом Shift
+    // ------------- Настройки полёта -------------
+    [Header("Полёт")]
+    [SerializeField] private float flyHoverForce = 9.8f;      // Сила парения (если понадобится)
+    [SerializeField] private float flyAcceleration = 15f;     // Ускорение для изменения скорости полёта
+    [SerializeField] private float maxFlySpeed = 25f;         // Максимальная скорость полёта
+    [SerializeField] private float flightDrag = 2f;           // Сопротивление воздуха в полёте
+    [SerializeField] private float pitchSpeed = 100f;         // Скорость наклона (pitch)
+    [SerializeField] private float yawSpeed = 100f;           // Скорость поворота по оси Y (yaw)
+    [SerializeField] private float rollSpeed = 100f;          // Скорость крена (roll)
+    [SerializeField] private float stability = 10f;           // Стабилизация (при отсутствии ввода)
+    [SerializeField] private float flightBoostMultiplier = 1.5f; // Множитель ускорения при Shift
+    [SerializeField] private KeyCode flightToggleKey = KeyCode.F; // Клавиша переключения режима полёта
 
-    [Header("Animation")]
-    [SerializeField] private Animator animator;
+    // ------------- Настройки анимации -------------
+    [Header("Анимация")]
+    [SerializeField] private Animator animator;             // Ссылка на Animator персонажа
 
-    [Header("Model References")]
-    [SerializeField] private Transform visualModel; // Перетащите сюда дочерний объект с мешом
     private Rigidbody rb;
     private bool isFlying = false;
-    private bool isGrounded;
+    private bool isGrounded = false;
     private float originalDrag;
-    private Vector3 flightInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        // При обычном движении блокируем вращение физикой
-        rb.freezeRotation = true;
+        // Сохраняем исходное значение сопротивления для наземного режима
         originalDrag = rb.linearDamping;
+        // В режиме ходьбы вращение контролируем скриптом, физика его не должна менять
+        rb.freezeRotation = true;
     }
 
     void Update()
     {
         HandleJump();
         HandleFlightToggle();
-        if(animator == null) return;
-    
-        // Пример: передача параметров в аниматор
-        animator.SetFloat("Speed", rb.linearVelocity.magnitude);
-        animator.SetBool("isGrounded", isGrounded);
-        animator.SetBool("isFlying", isFlying);
+        UpdateAnimations();
     }
 
     void FixedUpdate()
     {
         if (isFlying)
+        {
             HandleFlight();
+        }
         else
+        {
             HandleGroundMovement();
+        }
     }
 
-    // ------------------- Управление на земле -------------------
+    // ------------------- Наземное движение -------------------
     void HandleGroundMovement()
     {
+        // Чтение ввода для перемещения
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        Vector3 move = transform.right * horizontal + transform.forward * vertical;
-        // Если зажат Shift – бежим, иначе ходим
-        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        Vector3 moveInput = transform.right * horizontal + transform.forward * vertical;
 
-        if (isGrounded)
+        // Выбор скорости (бег или ходьба)
+        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        Vector3 desiredVelocity = moveInput * speed;
+        // Сохраняем вертикальную составляющую (например, от прыжка)
+        desiredVelocity.y = rb.linearVelocity.y;
+        rb.linearVelocity = desiredVelocity;
+
+        // Если персонаж не на земле, добавляем дополнительное управление
+        if (!isGrounded)
         {
-            // Сохраняем вертикальную скорость (например, для прыжков)
-            Vector3 targetVelocity = move * speed;
-            targetVelocity.y = rb.linearVelocity.y;
-            rb.linearVelocity = targetVelocity;
-        }
-        else
-        {
-            // Воздушное управление – плавное изменение скорости
-            rb.AddForce(move * speed * airControl, ForceMode.Acceleration);
+            rb.AddForce(moveInput * speed * airControl, ForceMode.Acceleration);
         }
     }
 
-    // ------------------- Управление полётом -------------------
+    // ------------------- Полёт -------------------
     void HandleFlight()
     {
-        // Считываем ввод для движения по трём осям
-        flightInput = new Vector3(
-            Input.GetAxis("Horizontal"),
-            Input.GetAxis("Vertical"),
-            Input.GetKey(KeyCode.Space) ? 1f : (Input.GetKey(KeyCode.LeftControl) ? -1f : 0f)
-        );
-
-        // Применяем сопротивление для плавности
+        // В полёте отключаем гравитацию и устанавливаем воздушное сопротивление
         rb.linearDamping = flightDrag;
-        rb.angularDamping = flightDrag * 2;
+        rb.angularDamping = flightDrag * 2f;
 
-        // УДАЛЕНО: Поддержание высоты (парение)
-        // rb.AddForce(Vector3.up * flyHoverForce, ForceMode.Acceleration);
+        // Чтение клавиатурного ввода для перемещения
+        float horizontal = Input.GetAxis("Horizontal");  // перемещение вправо/влево
+        float vertical = Input.GetAxis("Vertical");        // перемещение вперёд/назад
+        // Вверх и вниз – по пробелу и Ctrl соответственно
+        float ascend = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+        float descend = Input.GetKey(KeyCode.LeftControl) ? -1f : 0f;
+        float verticalInput = ascend + descend;
 
-        // Если зажат Shift, увеличиваем скорость полёта
+        // Чтение ввода мыши для поворота (наклон и рысканье)
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = -Input.GetAxis("Mouse Y"); // Инвертировано для естественного ощущения
+        // Дополнительно: клавиши Q/E для крена
+        float rollInput = 0f;
+        if (Input.GetKey(KeyCode.Q))
+            rollInput = rollSpeed * Time.fixedDeltaTime;
+        else if (Input.GetKey(KeyCode.E))
+            rollInput = -rollSpeed * Time.fixedDeltaTime;
+
+        // Расчёт изменения вращения
+        Quaternion deltaRotation = Quaternion.Euler(
+            mouseY * pitchSpeed * Time.fixedDeltaTime,
+            mouseX * yawSpeed * Time.fixedDeltaTime,
+            rollInput
+        );
+        // Плавно обновляем вращение Rigidbody
+        rb.MoveRotation(rb.rotation * deltaRotation);
+
+        // Определяем вектор направления полёта на основе текущей ориентации
+        Vector3 flightDirection = (transform.forward * vertical) +
+                                  (transform.right * horizontal) +
+                                  (transform.up * verticalInput);
+        if (flightDirection.sqrMagnitude > 0.01f)
+            flightDirection.Normalize();
+
+        // Проверка буста (Shift)
         float boost = Input.GetKey(KeyCode.LeftShift) ? flightBoostMultiplier : 1f;
-        // Расчет целевой скорости с учетом вертикального ввода (ось Z)
-        Vector3 targetVelocity = (transform.forward * flightInput.y +
-                                transform.right * flightInput.x +
-                                transform.up * flightInput.z) * maxFlySpeed * boost;
+        Vector3 targetVelocity = flightDirection * maxFlySpeed * boost;
 
-        // Вычисляем ускорение для достижения целевой скорости
-        Vector3 acceleration = (targetVelocity - rb.linearVelocity) * flyAcceleration;
+        // Расчёт ускорения для достижения целевой скорости
+        Vector3 velocityDiff = targetVelocity - rb.linearVelocity;
+        Vector3 acceleration = velocityDiff * flyAcceleration;
         rb.AddForce(acceleration, ForceMode.Acceleration);
 
-        // Остальная часть кода без изменений
-        float pitch = Input.GetAxis("Mouse Y") * pitchSpeed * Time.fixedDeltaTime;
-        float yaw = Input.GetAxis("Mouse X") * yawSpeed * Time.fixedDeltaTime;
-        float roll = Input.GetKey(KeyCode.Q) ? rollSpeed * Time.fixedDeltaTime :
-                    Input.GetKey(KeyCode.E) ? -rollSpeed * Time.fixedDeltaTime : 0f;
-
-        visualModel.localRotation *= Quaternion.Euler(pitch, yaw, roll);
-
-        if (flightInput.magnitude < 0.1f)
+        // Стабилизация: если ввода почти нет, снижаем угловую скорость и корректируем ориентацию
+        if (flightDirection.sqrMagnitude < 0.1f)
         {
-            visualModel.localRotation = Quaternion.Slerp(
-                visualModel.localRotation,
-                Quaternion.identity,
-                Time.fixedDeltaTime * stability
-            );
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, stability * Time.fixedDeltaTime);
+            Vector3 currentUp = transform.up;
+            Vector3 torque = Vector3.Cross(currentUp, Vector3.up) * stability;
+            rb.AddTorque(torque, ForceMode.Acceleration);
         }
-
-        rb.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
     }
 
-    // ------------------- Обработка прыжка -------------------
+    // ------------------- Прыжок -------------------
     void HandleJump()
     {
         if (Input.GetButtonDown("Jump") && isGrounded && !isFlying)
@@ -145,35 +154,49 @@ public class PlayerControllerItog : MonoBehaviour
     // ------------------- Переключение режима полёта -------------------
     void HandleFlightToggle()
     {
-        if (Input.GetKeyDown(flyKey))
+        if (Input.GetKeyDown(flightToggleKey))
         {
             isFlying = !isFlying;
             rb.useGravity = !isFlying;
             rb.linearDamping = isFlying ? flightDrag : originalDrag;
-            
-            // Всегда замораживаем вращение физического тела
-            rb.constraints = isFlying ? 
-                RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ :
-                RigidbodyConstraints.FreezeRotation;
 
-            // Сбрасываем вращение модели при переключении
-            visualModel.localRotation = Quaternion.identity;
+            if (isFlying)
+            {
+                // В полёте разрешаем свободное вращение
+                rb.freezeRotation = false;
+                rb.constraints = RigidbodyConstraints.None;
+            }
+            else
+            {
+                // При возвращении на землю блокируем вращение (контролируется скриптом)
+                rb.freezeRotation = true;
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+                rb.angularVelocity = Vector3.zero;
+                // Сохраняем только горизонтальную составляющую скорости
+                Vector3 vel = rb.linearVelocity;
+                vel.y = 0;
+                rb.linearVelocity = vel;
+            }
         }
     }
 
-    // ------------------- Обработка столкновений для определения соприкосновения с землей -------------------
+    // ------------------- Обновление анимаций -------------------
+    void UpdateAnimations()
+    {
+        if (animator)
+        {
+            animator.SetFloat("Speed", rb.linearVelocity.magnitude);
+            animator.SetBool("isGrounded", isGrounded);
+            animator.SetBool("isFlying", isFlying);
+        }
+    }
+
+    // ------------------- Обработка столкновений -------------------
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
-        }
-
-        // При любом столкновении сбрасываем вращение модели
-        if (isFlying)
-        {
-            visualModel.localRotation = Quaternion.identity;
-            rb.angularVelocity = Vector3.zero;
         }
     }
 
