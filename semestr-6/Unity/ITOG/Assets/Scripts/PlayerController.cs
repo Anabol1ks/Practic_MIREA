@@ -202,6 +202,8 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("Speed", rb.linearVelocity.magnitude);
             animator.SetBool("isGrounded", isGrounded);
             animator.SetBool("isFlying", isFlying);
+            if (Input.GetButtonDown("Jump") && isGrounded && !isFlying)
+                animator.SetTrigger("JumpTrigger");
         }
     }
 
@@ -217,4 +219,6 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
             isGrounded = false;
     }
+
+    
 }

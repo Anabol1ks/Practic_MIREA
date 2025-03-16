@@ -762,8 +762,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 6
-  runSpeed: 10
-  jumpForce: 300
+  runSpeed: 12
+  jumpForce: 500
   airControl: 0.5
   pitchSpeed: 100
   yawSpeed: 100
@@ -777,6 +777,7 @@ MonoBehaviour:
   levelingSpeed: 2
   levelingDamping: 1
   animator: {fileID: 18247715}
+  landingForwardForce: 10
 --- !u!1 &1874838154
 GameObject:
   m_ObjectHideFlags: 0
