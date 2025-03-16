@@ -18,47 +18,84 @@ public class CameraController : MonoBehaviour
     private Vector3 targetPosition;
     private Quaternion targetRotation;
 
+    private PlayerController playerController;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        if (playerBody == null) Debug.LogError("Назначьте playerBody в инспекторе!");
+
+        if (playerBody == null)
+            Debug.LogError("Назначьте playerBody в инспекторе!");
+
+        playerController = playerBody.GetComponent<PlayerController>();
     }
 
     void Update()
     {
-        HandleCameraMovement();
+        if (playerController != null && playerController.IsFlying)
+        {
+            // === В полёте ===
+            HandleFlightCamera();
+        }
+        else
+        {
+            // === На земле (или не летаем) ===
+            HandleCameraMovement();
+        }
     }
 
+    // ------------------- Обычный режим камеры (крутится от мыши) -------------------
     void HandleCameraMovement()
     {
-        // Обработка ввода
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Вращение игрока по горизонтали
+        // Вращаем игрока по горизонтали (если нужно)
         playerBody.Rotate(Vector3.up * mouseX);
-        
-        // Вращение камеры по вертикали
+
+        // Управляем наклоном камеры по вертикали
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, verticalClamp.x, verticalClamp.y);
 
-        // Расчет позиции камеры
+        // Вычисляем итоговый поворот
         Quaternion rotation = Quaternion.Euler(xRotation, playerBody.eulerAngles.y, 0);
+
+        // Позиция с учётом offset
         Vector3 offset = rotation * thirdPersonOffset;
         targetPosition = playerBody.position + offset;
 
-        // Обработка коллизий
+        // Проверка коллизий (чтобы камера не заходила в стены)
         HandleCameraCollision(ref targetPosition);
 
-        // Плавное перемещение камеры
+        // Плавно перемещаем камеру
         transform.position = Vector3.Lerp(transform.position, targetPosition, cameraSmoothness * Time.deltaTime);
-        
-        // Направление взгляда камеры
+
+        // Смотрим на игрока
         Vector3 lookDirection = playerBody.position - transform.position;
         targetRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, cameraSmoothness * Time.deltaTime);
     }
 
+    // ------------------- Камера в полёте: копирует поворот игрока и просто отстаёт -------------------
+    void HandleFlightCamera()
+    {
+        // Берём тот же поворот, что у игрока
+        Quaternion newCamRot = playerBody.rotation;
+
+        // Смещение в локальных координатах игрока
+        Vector3 offsetPos = newCamRot * thirdPersonOffset;
+        targetPosition = playerBody.position + offsetPos;
+        targetRotation = newCamRot;
+
+        // Проверка коллизий
+        HandleCameraCollision(ref targetPosition);
+
+        // Плавное движение
+        transform.position = Vector3.Lerp(transform.position, targetPosition, cameraSmoothness * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, cameraSmoothness * Time.deltaTime);
+    }
+
+    // ------------------- Проверка коллизий камеры -------------------
     void HandleCameraCollision(ref Vector3 targetPos)
     {
         RaycastHit hit;
@@ -73,6 +110,7 @@ public class CameraController : MonoBehaviour
             distance,
             collisionMask))
         {
+            // Сдвигаем позицию камеры чуть ближе, чтобы не проходить сквозь стены
             targetPos = hit.point - direction.normalized * 0.2f;
             targetPos = Vector3.Lerp(playerBody.position, targetPos, minDistance / distance);
         }
