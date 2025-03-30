@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Создаём папку для логов, если её нет
-logs_dir = "C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach/logs"
+logs_dir = "C:/Users/Grigo/Documents/Work/Practic_MIREA/semestr-6/Neyronki/cursach/logs"
 os.makedirs(logs_dir, exist_ok=True)
 
 # Проверка наличия GPU
@@ -34,10 +34,10 @@ transform_test = transforms.Compose([
 ])
 
 train_dataset = torchvision.datasets.CIFAR10(
-    root='C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach',
+    root='C:/Users/Grigo/Documents/Work/Practic_MIREA/semestr-6/Neyronki/cursach',
     train=True, download=True, transform=transform_train)
 test_dataset = torchvision.datasets.CIFAR10(
-    root='C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach',
+    root='C:/Users/Grigo/Documents/Work/Practic_MIREA/semestr-6/Neyronki/cursach',
     train=False, download=True, transform=transform_test)
 
 train_loader = torch.utils.data.DataLoader(
