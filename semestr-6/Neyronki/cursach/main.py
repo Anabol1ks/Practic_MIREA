@@ -29,10 +29,10 @@ transform_test = transforms.Compose([
 ])
 
 train_dataset = torchvision.datasets.CIFAR10(
-    root='C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach',
+    root='C:/Users/Grigo/Documents/Work/Practic_MIREA/semestr-6/Neyronki/cursach',
     train=True, download=True, transform=transform_train)
 test_dataset = torchvision.datasets.CIFAR10(
-    root='C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach',
+    root='C:/Users/Grigo/Documents/Work/Practic_MIREA/semestr-6/Neyronki/cursach',
     train=False, download=True, transform=transform_test)
 
 train_loader = torch.utils.data.DataLoader(
