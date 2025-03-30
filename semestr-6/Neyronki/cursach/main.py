@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Создаём папку для логов, если её нет
-logs_dir = "logs"
+logs_dir = "C:/Users/Grigo/Documents/GitGrisha/Practic_MIREA/semestr-6/Neyronki/cursach/logs"
 os.makedirs(logs_dir, exist_ok=True)
 
 # Проверка наличия GPU
