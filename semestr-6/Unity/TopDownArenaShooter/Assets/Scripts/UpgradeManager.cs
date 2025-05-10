@@ -7,8 +7,8 @@ public class UpgradeManager : MonoBehaviour
     public static UpgradeManager Instance;
 
     public GameObject upgradePanel;
-    public Button speedButton, damageButton, healthButton;
-    public TextMeshProUGUI speedPriceText, damagePriceText, healthPriceText;
+    public Button speedButton, damageButton, healthButton, shotgunButton;
+    public TextMeshProUGUI speedPriceText, damagePriceText, healthPriceText, shotgunPriceText;
 
     private PlayerMovement playerMovement;
     private PlayerShooting playerShooting;
@@ -16,7 +16,7 @@ public class UpgradeManager : MonoBehaviour
 
     // Цены и уровни
     private int speedLevel = 0, damageLevel = 0, healthLevel = 0;
-    private int speedPrice = 10, damagePrice = 10, healthPrice = 10;
+    private int speedPrice = 10, damagePrice = 10, healthPrice = 10, shotgunPrice = 150;
 
     void Awake()
     {
@@ -32,9 +32,11 @@ public class UpgradeManager : MonoBehaviour
         speedButton.onClick.AddListener(() => BuyUpgrade("Speed"));
         damageButton.onClick.AddListener(() => BuyUpgrade("Damage"));
         healthButton.onClick.AddListener(() => BuyUpgrade("Health"));
+        shotgunButton.onClick.AddListener(() => BuyUpgrade("Shotgun"));
 
         upgradePanel.SetActive(false);
         UpdatePriceTexts();
+        UpdateShotgunButtonState();
     }
 
     void Update()
@@ -55,6 +57,7 @@ public class UpgradeManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         UpdatePriceTexts();
+        UpdateShotgunButtonState();
     }
 
     void CloseUpgradePanel()
@@ -80,7 +83,7 @@ public class UpgradeManager : MonoBehaviour
             case "Damage":
                 if (ScoreManager.Instance.SpendScore(damagePrice))
                 {
-                    playerShooting.bulletPrefab.GetComponent<Bullet>().damage += 1f;
+                    playerShooting.IncreaseDamage(2f);
                     damageLevel++;
                     damagePrice = Mathf.CeilToInt(damagePrice * 1.2f);
                 }
@@ -93,6 +96,14 @@ public class UpgradeManager : MonoBehaviour
                     healthPrice = Mathf.CeilToInt(healthPrice * 1.2f);
                 }
                 break;
+            case "Shotgun":
+                if (ScoreManager.Instance.SpendScore(shotgunPrice))
+                {
+                    playerShooting.isShotgunUnlocked = true;
+                    shotgunButton.interactable = false;
+                    shotgunPriceText.text = "Куплено";
+                }
+                break;
         }
         UpdatePriceTexts();
     }
@@ -102,5 +113,16 @@ public class UpgradeManager : MonoBehaviour
         speedPriceText.text = $"Цена: {speedPrice}";
         damagePriceText.text = $"Цена: {damagePrice}";
         healthPriceText.text = $"Цена: {healthPrice}";
+        if (!playerShooting.isShotgunUnlocked)
+            shotgunPriceText.text = $"Цена: {shotgunPrice}";
+    }
+
+    void UpdateShotgunButtonState()
+    {
+        if (playerShooting.isShotgunUnlocked)
+        {
+            shotgunButton.interactable = false;
+            shotgunPriceText.text = "Куплено";
+        }
     }
 }

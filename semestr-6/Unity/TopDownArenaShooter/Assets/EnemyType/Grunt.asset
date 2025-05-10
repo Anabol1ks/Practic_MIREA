@@ -19,7 +19,7 @@ MonoBehaviour:
   damage: 1
   attackRange: 1
   isRanged: 0
-  minScore: 1
-  maxScore: 3
+  minScore: 2
+  maxScore: 4
   spawnWeight: 1
   unlockTime: 0

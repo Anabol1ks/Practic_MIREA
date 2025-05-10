@@ -1,80 +1,103 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerShooting : MonoBehaviour
 {
+    [Header("Pistol Settings")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float bulletSpeed = 60f;
-    public float fireRate = 0.2f; // Уменьшаем задержку между выстрелами
+    public float bulletSpeed = 20f;
+    public float pistolFireRate = 0.5f;
+    public float pistolDamage = 1f;
+
+    [Header("Shotgun Settings")]
+    public bool isShotgunUnlocked = false;
+    public Transform shotgunFirePoint;
+    public GameObject shotgunPelletPrefab;
+    public int pelletCount = 8;             // сколько пеллет вылетает
+    public float shotgunSpreadAngle = 30f;  // угол разброса в градусах
+    public float shotgunFireRate = 1.5f;    // задержка между выстрелами дробовиком
+    public float shotgunDamage = 0.85f;     // базовый урон дробовика (85% от пистолета)
+    public AudioClip shotgunSound;
+
+    [Header("UI")]
+    public TextMeshProUGUI damageText;
+
+    private bool useShotgun = false;
     private float nextFireTime = 0f;
-    private bool canShoot = true;
+    private AudioSource audioSource;
 
     void Start()
     {
-        // Проверяем наличие необходимых компонентов
-        if (firePoint == null)
-        {
-            Debug.LogError("FirePoint не назначен в PlayerShooting!");
-            enabled = false;
-            return;
-        }
-
-        if (bulletPrefab == null)
-        {
-            Debug.LogError("BulletPrefab не назначен в PlayerShooting!");
-            enabled = false;
-            return;
-        }
+        audioSource = GetComponent<AudioSource>();
+        UpdateDamageUI();
     }
 
     void Update()
     {
-        // Проверяем возможность стрельбы
-        if (Time.time >= nextFireTime)
+        // Переключение оружия (Q)
+        if (isShotgunUnlocked && Input.GetKeyDown(KeyCode.Q))
         {
-            canShoot = true;
+            useShotgun = !useShotgun;
+            UpdateDamageUI();
         }
 
-        // Стрельба по левой кнопке мыши или пробелу
-        if ((Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space)) && canShoot)
+        // Стрельба
+        if (Time.time >= nextFireTime && (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space)))
         {
-            Shoot();
-            canShoot = false;
-            nextFireTime = Time.time + fireRate;
+            if (useShotgun)
+                ShootShotgun();
+            else
+                ShootPistol();
         }
     }
 
-    void Shoot()
+    void ShootPistol()
     {
-        try
-        {
-            // Создаём пулю с правильной позицией и поворотом
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            
-            // Получаем компонент Rigidbody пули
-            if (bullet.TryGetComponent<Rigidbody>(out Rigidbody rb))
-            {
-                // Настраиваем физику пули
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                rb.useGravity = false;
-                
-                // Устанавливаем скорость пули
-                rb.linearVelocity = firePoint.forward * bulletSpeed;
-            }
-            else
-            {
-                Debug.LogWarning("Пуля не имеет компонента Rigidbody!");
-                Destroy(bullet);
-                return;
-            }
+        nextFireTime = Time.time + pistolFireRate;
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        Bullet bulletComponent = bullet.GetComponent<Bullet>();
+        bulletComponent.damage = pistolDamage;
+        bullet.GetComponent<Rigidbody>().linearVelocity = firePoint.forward * bulletSpeed;
+        Destroy(bullet, 2f);
+        audioSource.PlayOneShot(audioSource.clip);
+    }
 
-            // Уничтожаем пулю через 2 секунды
-            Destroy(bullet, 2f);
-        }
-        catch (System.Exception e)
+    void ShootShotgun()
+    {
+        nextFireTime = Time.time + shotgunFireRate;
+
+        for (int i = 0; i < pelletCount; i++)
         {
-            Debug.LogError($"Ошибка при стрельбе: {e.Message}");
+            float angle = Random.Range(-shotgunSpreadAngle / 2f, shotgunSpreadAngle / 2f);
+            Quaternion rot = shotgunFirePoint.rotation * Quaternion.Euler(0, angle, 0);
+
+            GameObject pellet = Instantiate(shotgunPelletPrefab, shotgunFirePoint.position, rot);
+            Bullet pelletComponent = pellet.GetComponent<Bullet>();
+            pelletComponent.damage = shotgunDamage;
+            pellet.GetComponent<Rigidbody>().linearVelocity = rot * Vector3.forward * bulletSpeed;
+
+            Destroy(pellet, 1f);
+        }
+
+        if (shotgunSound != null)
+            audioSource.PlayOneShot(shotgunSound);
+    }
+
+    public void IncreaseDamage(float amount)
+    {
+        pistolDamage += amount;
+        shotgunDamage = pistolDamage * 0.85f; // Обновляем урон дробовика
+        UpdateDamageUI();
+    }
+
+    void UpdateDamageUI()
+    {
+        if (damageText != null)
+        {
+            float currentDamage = useShotgun ? shotgunDamage : pistolDamage;
+            string weaponName = useShotgun ? "Дробовик" : "Пистолет";
+            damageText.text = $"{weaponName}\nУрон: {currentDamage:F1}";
         }
     }
 }
