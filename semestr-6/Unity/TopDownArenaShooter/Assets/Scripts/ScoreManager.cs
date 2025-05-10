@@ -1,20 +1,31 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
     public int score = 0;
-    public int scoreToUpgrade = 10;
     public TextMeshProUGUI scoreText;
 
     void Start(){
-      UpdateScoreUI();
+        UpdateScoreUI();
     }
     void Awake()
     {
         Instance = this;
+    }
+
+    public bool SpendScore(int amount)
+    {
+        if (score >= amount)
+        {
+            score -= amount;
+            UpdateScoreUI();
+            return true;
+        }
+        return false;
     }
 
     public void AddScore(int amount)
@@ -22,12 +33,6 @@ public class ScoreManager : MonoBehaviour
         score += amount;
         Debug.Log("Score: " + score);
         UpdateScoreUI();
-
-        if (score >= scoreToUpgrade)
-        {
-            UpgradeManager.Instance.ShowUpgradePanel();
-            score = 0; // Сброс или увеличим порог
-        }
     }
 
     void UpdateScoreUI()
@@ -35,5 +40,4 @@ public class ScoreManager : MonoBehaviour
         if (scoreText != null)
             scoreText.text = "Score: " + score.ToString();
     }
-
 }
