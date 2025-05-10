@@ -1,13 +1,12 @@
 using UnityEngine;
-
 public class EnemyHealth : MonoBehaviour
 {
-    public float maxHealth = 3f;
+    public EnemyType enemyType;
     private float currentHealth;
 
     void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = enemyType.maxHealth;
     }
 
     public void TakeDamage(float amount)
@@ -21,7 +20,8 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
+        int score = Random.Range(enemyType.minScore, enemyType.maxScore + 1);
+        ScoreManager.Instance.AddScore(score);
         Destroy(gameObject);
-        ScoreManager.Instance.AddScore(7);
     }
 }
