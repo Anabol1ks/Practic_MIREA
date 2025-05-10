@@ -2,71 +2,74 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 15f; // Скорость поворота (можно регулировать)
+    public float moveSpeed = 10f;
+    public float mouseSensitivity = 2f; // Чувствительность мыши
     public Rigidbody rb;
     public Camera mainCamera;
     public LayerMask groundMask;
 
-    
-    private Vector2 _moveInput; // Ввод движения (WASD / левый стик)
-    private Vector2 _aimInput;  // Ввод прицеливания (мышь / правый стик)
+    private Vector2 _moveInput;
+    private float _rotationX = 0f; // Текущий поворот по горизонтали
+    private Vector3 _moveDirection;
+    private bool _isMoving;
 
     void Start()
     {
         if (mainCamera == null)
             mainCamera = Camera.main;
         
-        // Заблокировать курсор в центре экрана (опционально)
-        Cursor.lockState = CursorLockMode.Confined;
+        if (rb == null)
+            rb = GetComponent<Rigidbody>();
+
+        // Настраиваем Rigidbody для более стабильного движения
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        
+        Cursor.lockState = CursorLockMode.Locked; // Блокируем курсор в центре экрана
         Cursor.visible = false;
     }
 
     void Update()
     {
-        // 1. Получаем ввод движения (клавиши WASD)
+        HandleMovementInput();
+        HandleCameraRotation();
+    }
+
+    void HandleMovementInput()
+    {
         _moveInput.x = Input.GetAxisRaw("Horizontal");
         _moveInput.y = Input.GetAxisRaw("Vertical");
-        
-        // 2. Получаем направление прицеливания (мышь)
-        Vector3 mouseScreenPos = Input.mousePosition;
-        mouseScreenPos.z = mainCamera.transform.position.y; // Дистанция от камеры до игрока (для Raycast)
-        
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
-        {
-            Vector3 lookDir = hit.point - transform.position;
-            lookDir.y = 0;
+        _isMoving = _moveInput.magnitude > 0.1f;
+    }
 
-            if (lookDir != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(lookDir);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation, 
-                    targetRotation, 
-                    rotationSpeed * Time.deltaTime
-                );
-            }
-        }
+    void HandleCameraRotation()
+    {
+        // Получаем ввод мыши
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        
+        // Поворачиваем персонажа по горизонтали
+        _rotationX += mouseX;
+        transform.rotation = Quaternion.Euler(0, _rotationX, 0);
     }
 
     void FixedUpdate()
     {
+        if (!_isMoving) return;
+
         // Получаем направления камеры
         Vector3 camForward = mainCamera.transform.forward;
         Vector3 camRight = mainCamera.transform.right;
 
-        // Убираем наклон по Y
         camForward.y = 0;
         camRight.y = 0;
-
         camForward.Normalize();
         camRight.Normalize();
 
-        // Направление движения: относительно камеры
-        Vector3 moveDirection = (camRight * _moveInput.x + camForward * _moveInput.y).normalized;
-
-        rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+        _moveDirection = (camRight * _moveInput.x + camForward * _moveInput.y).normalized;
+        
+        // Используем MovePosition для более плавного движения
+        Vector3 newPosition = rb.position + _moveDirection * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(newPosition);
     }
-
 }
