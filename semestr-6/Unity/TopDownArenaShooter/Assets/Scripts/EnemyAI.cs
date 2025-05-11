@@ -13,11 +13,15 @@ public class EnemyAI : MonoBehaviour
     [Header("Приоритеты")]
     public float baseAttackPriority = 0.7f; // 70% приоритет на атаку базы
     public float detectionRadius = 15f; // Радиус в котором враг видит цели
+    public float reducedDetectionRadius = 5f; // Уменьшенный радиус обнаружения, когда враг не в свете фонарика
 
     private bool isAttackingBase = false;
     private BaseHealth baseHealth;
     private PlayerHealth playerHealth;
+    private FogOfWar fogOfWar;
+    private EnemyVisibility enemyVisibility;
 
+    [System.Obsolete]
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -35,6 +39,16 @@ public class EnemyAI : MonoBehaviour
         
         // Настраиваем скорость движения из типа врага
         agent.speed = enemyHealth.enemyType.moveSpeed;
+
+        // Получаем систему тумана войны
+        fogOfWar = FindObjectOfType<FogOfWar>();
+
+        // Получаем компонент видимости врага
+        enemyVisibility = GetComponent<EnemyVisibility>();
+        if (enemyVisibility == null)
+        {
+            enemyVisibility = gameObject.AddComponent<EnemyVisibility>();
+        }
     }
 
     void Update()
@@ -43,8 +57,8 @@ public class EnemyAI : MonoBehaviour
         
         // Если база уничтожена - атакуем только игрока
         if (playerBase == null || baseHealth == null || baseHealth.currentHealth <= 0)
-    {
-        if (player != null)
+        {
+            if (player != null)
                 ChaseAndAttackPlayer();
             return;
         }
@@ -52,9 +66,12 @@ public class EnemyAI : MonoBehaviour
         // Оцениваем расстояния до целей
         float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : float.MaxValue;
         float distanceToBase = Vector3.Distance(transform.position, playerBase.position);
+
+        // Получаем текущий радиус обнаружения в зависимости от освещённости
+        float currentDetectionRadius = GetCurrentDetectionRadius();
         
         // Если мы в пределах радиуса обнаружения
-        if (distanceToPlayer <= detectionRadius || distanceToBase <= detectionRadius)
+        if (distanceToPlayer <= currentDetectionRadius || distanceToBase <= detectionRadius)
         {
             // Выбираем цель атаки на основе приоритетов
             if (Random.value <= baseAttackPriority)
@@ -84,28 +101,46 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // Метод для получения текущего радиуса обнаружения в зависимости от освещённости
+    float GetCurrentDetectionRadius()
+    {
+        if (fogOfWar == null) return detectionRadius;
+
+        // Если враг в зоне света - используем обычный радиус обнаружения
+        // Если враг в темноте - используем уменьшенный радиус
+        return fogOfWar.IsInLightArea(transform.position) ? detectionRadius : reducedDetectionRadius;
+    }
+
     void ChaseAndAttackPlayer()
     {
         if (player == null) return;
         
-            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            
-            // Если враг дальнего боя и игрок в пределах дальности атаки
-            if (enemyHealth.enemyType.isRanged && distanceToPlayer <= enemyHealth.enemyType.attackRange)
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float currentDetectionRadius = GetCurrentDetectionRadius();
+        
+        // Если игрок вне зоны обнаружения, останавливаемся
+        if (distanceToPlayer > currentDetectionRadius && !agent.hasPath)
+        {
+            agent.isStopped = true;
+            return;
+        }
+        
+        // Если враг дальнего боя и игрок в пределах дальности атаки
+        if (enemyHealth.enemyType.isRanged && distanceToPlayer <= enemyHealth.enemyType.attackRange)
+        {
+            agent.isStopped = true;
+            if (Time.time >= nextAttackTime)
             {
-                agent.isStopped = true;
-                if (Time.time >= nextAttackTime)
-                {
                 AttackPlayer();
-                    nextAttackTime = Time.time + attackCooldown;
-                }
+                nextAttackTime = Time.time + attackCooldown;
             }
-            // Если враг ближнего боя или игрок вне дальности атаки
-            else
-            {
-                agent.isStopped = false;
-                agent.SetDestination(player.position);
-            }
+        }
+        // Если враг ближнего боя или игрок вне дальности атаки
+        else
+        {
+            agent.isStopped = false;
+            agent.SetDestination(player.position);
+        }
     }
 
     void ChaseAndAttackBase()
@@ -134,7 +169,7 @@ public class EnemyAI : MonoBehaviour
 
     void AttackPlayer()
     {
-            if (playerHealth != null)
+        if (playerHealth != null)
         {
             if (enemyHealth.enemyType.isRanged)
             {

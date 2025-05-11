@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6347530375854845599}
   - component: {fileID: 4337508062699268962}
   - component: {fileID: 8702532976640242355}
+  - component: {fileID: -3071218498162636065}
   m_Layer: 0
   m_Name: Elite
   m_TagString: Enemy
@@ -176,6 +177,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 6347530375854845599}
+  baseAttackPriority: 0.7
+  detectionRadius: 15
+  reducedDetectionRadius: 5
 --- !u!114 &8702532976640242355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,3 +193,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: {fileID: 11400000, guid: c06597210173eda4d8d1da1535d4ee36, type: 2}
+--- !u!114 &-3071218498162636065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815264267739239543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad571e032a7b38a4cbb9ec5fbe373f1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeSpeed: 2

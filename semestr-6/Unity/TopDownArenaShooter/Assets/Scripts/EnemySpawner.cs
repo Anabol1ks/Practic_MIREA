@@ -109,6 +109,12 @@ public class EnemySpawner : MonoBehaviour
                 modifiedType.maxScore = selectedType.maxScore;
                 enemyHealth.enemyType = modifiedType;
             }
+            
+            // Добавляем компонент EnemyVisibility, если его нет
+            if (enemy.GetComponent<EnemyVisibility>() == null)
+            {
+                enemy.AddComponent<EnemyVisibility>();
+            }
         }
     }
 
