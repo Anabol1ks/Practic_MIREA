@@ -43,8 +43,8 @@ public class EnemyAI : MonoBehaviour
         
         // Если база уничтожена - атакуем только игрока
         if (playerBase == null || baseHealth == null || baseHealth.currentHealth <= 0)
-        {
-            if (player != null)
+    {
+        if (player != null)
                 ChaseAndAttackPlayer();
             return;
         }
@@ -88,24 +88,24 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
         
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        
-        // Если враг дальнего боя и игрок в пределах дальности атаки
-        if (enemyHealth.enemyType.isRanged && distanceToPlayer <= enemyHealth.enemyType.attackRange)
-        {
-            agent.isStopped = true;
-            if (Time.time >= nextAttackTime)
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            
+            // Если враг дальнего боя и игрок в пределах дальности атаки
+            if (enemyHealth.enemyType.isRanged && distanceToPlayer <= enemyHealth.enemyType.attackRange)
             {
+                agent.isStopped = true;
+                if (Time.time >= nextAttackTime)
+                {
                 AttackPlayer();
-                nextAttackTime = Time.time + attackCooldown;
+                    nextAttackTime = Time.time + attackCooldown;
+                }
             }
-        }
-        // Если враг ближнего боя или игрок вне дальности атаки
-        else
-        {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
-        }
+            // Если враг ближнего боя или игрок вне дальности атаки
+            else
+            {
+                agent.isStopped = false;
+                agent.SetDestination(player.position);
+            }
     }
 
     void ChaseAndAttackBase()
@@ -134,7 +134,7 @@ public class EnemyAI : MonoBehaviour
 
     void AttackPlayer()
     {
-        if (playerHealth != null)
+            if (playerHealth != null)
         {
             if (enemyHealth.enemyType.isRanged)
             {
