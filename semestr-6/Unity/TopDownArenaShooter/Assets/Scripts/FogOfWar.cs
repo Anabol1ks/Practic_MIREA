@@ -5,14 +5,19 @@ public class FogOfWar : MonoBehaviour
     public static FogOfWar Instance;
 
     public Material fogOfWarMaterial;           // Материал для тумана войны
-    public Transform player;                   // Трансформ игрока
+    public Transform player;                    // Трансформ игрока
     public PlayerFlashlight playerFlashlight;   // Ссылка на компонент фонарика игрока
     public LayerMask fogOfWarLayer;            // Слой для объектов, затрагиваемых туманом войны
     
     [Range(0.0f, 1.0f)]
     public float globalDarkness = 0.9f;         // Глобальное затемнение (0 - полная прозрачность, 1 - полная темнота)
     
+    [Header("Уличные фонари")]
+    public bool includeStreetLights = true;     // Учитывать ли уличные фонари
+    public Color streetLightColor = Color.yellow; // Цвет света уличных фонарей
+    
     private Camera mainCamera;
+    private StreetLightManager streetLightManager;
     
     void Awake()
     {
@@ -35,6 +40,9 @@ public class FogOfWar : MonoBehaviour
                 }
             }
         }
+        
+        // Находим менеджер уличных фонарей
+        streetLightManager = FindObjectOfType<StreetLightManager>();
         
         // Проверяем материал для тумана войны
         if (fogOfWarMaterial == null)
@@ -69,8 +77,17 @@ public class FogOfWar : MonoBehaviour
         }
     }
     
-    // Метод для определения, находится ли объект в видимой зоне фонарика
+    // Метод для определения, находится ли объект в видимой зоне фонарика игрока
     public bool IsInLightArea(Vector3 position)
+    {
+        bool inPlayerLight = IsInPlayerLightArea(position);
+        bool inStreetLight = includeStreetLights && IsInStreetLightArea(position);
+        
+        return inPlayerLight || inStreetLight;
+    }
+    
+    // Проверка, находится ли позиция в свете фонарика игрока
+    private bool IsInPlayerLightArea(Vector3 position)
     {
         if (player == null || playerFlashlight == null || !playerFlashlight.spotLight.enabled)
             return false;
@@ -80,5 +97,19 @@ public class FogOfWar : MonoBehaviour
         float distance = Vector3.Distance(player.position, position);
         
         return angle <= playerFlashlight.lightAngle / 2 && distance <= playerFlashlight.maxLightDistance;
+    }
+    
+    // Проверка, находится ли позиция в свете уличных фонарей
+    private bool IsInStreetLightArea(Vector3 position)
+    {
+        if (streetLightManager == null)
+            streetLightManager = FindObjectOfType<StreetLightManager>();
+            
+        if (streetLightManager != null)
+        {
+            return streetLightManager.IsPositionInAnyLightArea(position);
+        }
+        
+        return false;
     }
 } 

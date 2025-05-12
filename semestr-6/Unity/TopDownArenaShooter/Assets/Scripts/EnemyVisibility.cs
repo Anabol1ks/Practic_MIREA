@@ -4,6 +4,7 @@ public class EnemyVisibility : MonoBehaviour
 {
     private Renderer[] renderers;
     private FogOfWar fogOfWar;
+    private StreetLightManager streetLightManager;
     private bool wasVisible = false;
     
     // Визуальный эффект при обнаружении
@@ -11,6 +12,7 @@ public class EnemyVisibility : MonoBehaviour
     private float currentAlpha = 0f;
     private Color originalColor;
     
+    [System.Obsolete]
     void Start()
     {
         // Получаем все рендереры объекта
@@ -24,11 +26,22 @@ public class EnemyVisibility : MonoBehaviour
         
         // Получаем ссылку на систему тумана войны
         fogOfWar = FogOfWar.Instance;
+        if (fogOfWar == null)
+        {
+            fogOfWar = FindObjectOfType<FogOfWar>();
+        }
+        
+        // Получаем ссылку на менеджер уличных фонарей
+        streetLightManager = StreetLightManager.Instance;
+        if (streetLightManager == null)
+        {
+            streetLightManager = FindObjectOfType<StreetLightManager>();
+        }
         
         // Делаем врага изначально невидимым
         SetVisibility(false);
     }
-
+    
     [System.Obsolete]
     void Update()
     {
@@ -38,8 +51,18 @@ public class EnemyVisibility : MonoBehaviour
             if (fogOfWar == null) return;
         }
         
-        // Проверяем, находится ли враг в зоне действия фонарика
-        bool isVisible = fogOfWar.IsInLightArea(transform.position);
+        // Проверяем, находится ли враг в зоне действия фонарика игрока
+        bool isInPlayerLight = fogOfWar.IsInLightArea(transform.position);
+        
+        // Проверяем, находится ли враг в зоне действия уличного фонаря
+        bool isInStreetLight = false;
+        if (streetLightManager != null && streetLightManager.affectEnemyVisibility)
+        {
+            isInStreetLight = streetLightManager.IsPositionInAnyLightArea(transform.position);
+        }
+        
+        // Враг виден, если он в зоне действия фонарика игрока ИЛИ в зоне уличного фонаря
+        bool isVisible = isInPlayerLight || isInStreetLight;
         
         // Если изменилось состояние видимости, обновляем отображение
         if (isVisible != wasVisible)
