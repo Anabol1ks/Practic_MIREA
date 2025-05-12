@@ -41,13 +41,38 @@ public class EnemyAI : MonoBehaviour
         agent.speed = enemyHealth.enemyType.moveSpeed;
 
         // Получаем систему тумана войны
-        fogOfWar = FindObjectOfType<FogOfWar>();
+        FindFogOfWar();
 
         // Получаем компонент видимости врага
-        enemyVisibility = GetComponent<EnemyVisibility>();
+        GetEnemyVisibility();
+    }
+    
+    // Метод для поиска компонента FogOfWar
+    void FindFogOfWar()
+    {
+        if (fogOfWar == null)
+        {
+            // Сначала пробуем использовать синглтон
+            fogOfWar = FogOfWar.Instance;
+            
+            // Если не получилось, ищем компонент в сцене
+            if (fogOfWar == null)
+            {
+                fogOfWar = FindObjectOfType<FogOfWar>();
+            }
+        }
+    }
+    
+    // Метод для получения/добавления компонента EnemyVisibility
+    void GetEnemyVisibility()
+    {
         if (enemyVisibility == null)
         {
-            enemyVisibility = gameObject.AddComponent<EnemyVisibility>();
+            enemyVisibility = GetComponent<EnemyVisibility>();
+            if (enemyVisibility == null)
+            {
+                enemyVisibility = gameObject.AddComponent<EnemyVisibility>();
+            }
         }
     }
 
@@ -104,11 +129,25 @@ public class EnemyAI : MonoBehaviour
     // Метод для получения текущего радиуса обнаружения в зависимости от освещённости
     float GetCurrentDetectionRadius()
     {
-        if (fogOfWar == null) return detectionRadius;
+        // Если нет компонента FogOfWar, ищем его
+        if (fogOfWar == null) 
+        {
+            FindFogOfWar();
+            if (fogOfWar == null)
+                return detectionRadius;
+        }
 
-        // Если враг в зоне света - используем обычный радиус обнаружения
-        // Если враг в темноте - используем уменьшенный радиус
-        return fogOfWar.IsInLightArea(transform.position) ? detectionRadius : reducedDetectionRadius;
+        try
+        {
+            // Если враг в зоне света - используем обычный радиус обнаружения
+            // Если враг в темноте - используем уменьшенный радиус
+            return fogOfWar.IsInLightArea(transform.position) ? detectionRadius : reducedDetectionRadius;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Ошибка при проверке освещения: {e.Message}");
+            return detectionRadius;
+        }
     }
 
     void ChaseAndAttackPlayer()
