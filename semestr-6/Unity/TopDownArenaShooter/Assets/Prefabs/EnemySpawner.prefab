@@ -50,9 +50,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e2fbab772d92e04db54cd93414a68c0, type: 2}
   - {fileID: 11400000, guid: d301ab861b19d8945aea96b0eaf0a785, type: 2}
   - {fileID: 11400000, guid: c06597210173eda4d8d1da1535d4ee36, type: 2}
-  spawnInterval: 2
   spawnRadius: 10
   maxEnemies: 20
-  difficultyIncreaseInterval: 60
-  difficultyMultiplier: 1.05
-  maxDifficultyMultiplier: 2
+  useSpawnZones: 1
+  minDistanceFromPlayer: 8
+  startWaveEnemyCount: 5
+  enemyCountMultiplierPerWave: 1.2
+  timeBetweenWaves: 10
+  timeBetweenEnemySpawnsInWave: 0.5
+  waveDifficultyMultiplier: 1.1

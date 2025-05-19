@@ -35,8 +35,8 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        // Переключение оружия (Q)
-        if (isShotgunUnlocked && Input.GetKeyDown(KeyCode.Q))
+        // Переключение оружия (C)
+        if (isShotgunUnlocked && Input.GetKeyDown(KeyCode.C))
         {
             useShotgun = !useShotgun;
             UpdateDamageUI();

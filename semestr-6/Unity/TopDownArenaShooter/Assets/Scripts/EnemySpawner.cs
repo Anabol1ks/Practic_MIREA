@@ -2,32 +2,36 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections; // Добавим namespace для Coroutines
 
 public class EnemySpawner : MonoBehaviour
 {
     public List<EnemyType> enemyTypes;
-    public float spawnInterval = 2f;
     public float spawnRadius = 10f; // Используется как запасной вариант, если нет зон спавна
     public int maxEnemies = 20;
-    public float difficultyIncreaseInterval = 30f;
-    public float difficultyMultiplier = 1.05f;
-    public float maxDifficultyMultiplier = 2f;
     
     [Header("Зоны спавна")]
     public bool useSpawnZones = true; // Использовать ли зоны спавна вместо случайного спавна
     public float minDistanceFromPlayer = 8f; // Минимальное расстояние до игрока при спавне
 
+    [Header("Настройки волн")]
+    public int startWaveEnemyCount = 5; // Количество врагов в первой волне
+    public float enemyCountMultiplierPerWave = 1.2f; // Множитель количества врагов на каждую следующую волну
+    public float timeBetweenWaves = 10f; // Время между волнами
+    public float timeBetweenEnemySpawnsInWave = 0.5f; // Время между спавном отдельных врагов в волне
+    public float waveDifficultyMultiplier = 1.1f; // Множитель сложности (здоровье, урон) на каждую следующую волну
+
     private Transform player;
     private Transform playerBase;
-    private float gameTime = 0f;
-    private float nextDifficultyIncrease = 0f;
     private float currentDifficultyMultiplier = 1f;
     private SpawnZoneManager zoneManager;
 
-    [System.Obsolete]
+    private int currentWave = 0;
+    private int enemiesRemainingInWave = 0;
+    private bool isSpawningWave = false;
+
     void Start()
     {
-        ResetDifficulty();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         
         // Находим базу игрока
@@ -45,37 +49,60 @@ public class EnemySpawner : MonoBehaviour
             useSpawnZones = false;
         }
         
-        InvokeRepeating(nameof(SpawnEnemy), 1f, spawnInterval);
-    }
-
-    void ResetDifficulty()
-    {
-        gameTime = 0f;
-        currentDifficultyMultiplier = 1f;
-        nextDifficultyIncrease = difficultyIncreaseInterval;
-    }
-
-    void Update()
-    {
-        gameTime += Time.deltaTime;
-        
-        // Увеличиваем сложность каждые difficultyIncreaseInterval секунд
-        if (gameTime >= nextDifficultyIncrease)
-        {
-            IncreaseDifficulty();
-            nextDifficultyIncrease = gameTime + difficultyIncreaseInterval;
-        }
+        StartCoroutine(WaveSpawner()); // Запускаем корутину управления волнами
     }
 
     void IncreaseDifficulty()
     {
-        // Проверяем, не превышен ли максимальный множитель
-        if (currentDifficultyMultiplier < maxDifficultyMultiplier)
+        currentDifficultyMultiplier *= waveDifficultyMultiplier;
+        Debug.Log($"Difficulty increased for wave {currentWave}! Multiplier: {currentDifficultyMultiplier}");
+    }
+
+    IEnumerator WaveSpawner()
+    {
+        // Ждем несколько секунд перед первой волной
+        yield return new WaitForSeconds(5f);
+
+        while (true) // Бесконечный цикл для спавна волн
         {
-            currentDifficultyMultiplier *= difficultyMultiplier;
-            // Ограничиваем множитель максимальным значением
-            currentDifficultyMultiplier = Mathf.Min(currentDifficultyMultiplier, maxDifficultyMultiplier);
-            Debug.Log($"Difficulty increased! Multiplier: {currentDifficultyMultiplier}");
+            currentWave++;
+            Debug.Log($"Starting Wave {currentWave}");
+
+            // Увеличиваем сложность для новой волны
+            IncreaseDifficulty();
+
+            // Рассчитываем количество врагов для текущей волны
+            int enemiesToSpawnThisWave = Mathf.RoundToInt(startWaveEnemyCount * Mathf.Pow(enemyCountMultiplierPerWave, currentWave - 1));
+            enemiesRemainingInWave = enemiesToSpawnThisWave; // Инициализируем счетчик оставшихся врагов в волне
+            
+            isSpawningWave = true;
+            // Спавним врагов для текущей волны
+            for (int i = 0; i < enemiesToSpawnThisWave; i++)
+            {
+                // Проверяем, не превышено ли максимальное количество врагов на сцене
+                int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
+                if (currentEnemies >= maxEnemies)
+                {
+                    Debug.LogWarning($"Max enemies reached ({maxEnemies}). Waiting for enemies to be defeated before spawning more.");
+                    // Ждем, пока количество врагов не уменьшится
+                    yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemies);
+                }
+                
+                SpawnEnemy();
+                yield return new WaitForSeconds(timeBetweenEnemySpawnsInWave); // Пауза между спавном отдельных врагов
+            }
+            isSpawningWave = false;
+
+            Debug.Log($"Finished spawning wave {currentWave}. Waiting for all enemies to be defeated.");
+            
+            // Ждем, пока все враги текущей волны не будут уничтожены
+            // TODO: Возможно, нужно будет отслеживать врагов, принадлежащих только к текущей волне
+            // Пока что ждем, пока на сцене не останется врагов с тегом "Enemy"
+            yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length == 0);
+
+            Debug.Log($"All enemies in wave {currentWave} defeated. Waiting for next wave.");
+            // Пауза между волнами
+            yield return new WaitForSeconds(timeBetweenWaves);
         }
     }
 
@@ -142,12 +169,12 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        // Проверяем количество врагов на сцене
+        // Проверяем количество врагов на сцене - эта проверка теперь дублируется в корутине, но оставим ее для надежности
         int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        if (currentEnemies >= maxEnemies) return;
+        if (currentEnemies >= maxEnemies) return; // Если врагов слишком много, не спавним
 
-        // Выбираем доступные типы врагов на основе времени игры
-        var availableTypes = enemyTypes.Where(t => t.unlockTime <= gameTime).ToList();
+        // Выбираем доступные типы врагов на основе времени игры - теперь на основе волны или других критериев, но пока оставим так
+        var availableTypes = enemyTypes.Where(t => t.unlockTime <= Time.time).ToList(); // Используем Time.time вместо gameTime
         if (availableTypes.Count == 0) return;
 
         // Выбираем тип врага на основе весов
@@ -178,17 +205,21 @@ public class EnemySpawner : MonoBehaviour
         EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
         if (enemyHealth != null)
         {
-            enemyHealth.enemyType = selectedType;
             // Создаем копию параметров врага, чтобы не менять оригинальные значения
             EnemyType modifiedType = ScriptableObject.CreateInstance<EnemyType>();
             modifiedType.maxHealth = selectedType.maxHealth * currentDifficultyMultiplier;
             modifiedType.damage = selectedType.damage * currentDifficultyMultiplier;
-            modifiedType.moveSpeed = selectedType.moveSpeed;
+            modifiedType.moveSpeed = selectedType.moveSpeed; // Скорость не меняем от волны, только от типа врага
             modifiedType.attackRange = selectedType.attackRange;
             modifiedType.isRanged = selectedType.isRanged;
             modifiedType.minScore = selectedType.minScore;
             modifiedType.maxScore = selectedType.maxScore;
-            enemyHealth.enemyType = modifiedType;
+            // Копируем другие параметры, если есть
+            // modifiedType.enemyPrefab = selectedType.enemyPrefab; // Не нужно копировать префаб
+            // modifiedType.unlockTime = selectedType.unlockTime; // Не нужно копировать unlockTime
+            modifiedType.spawnWeight = selectedType.spawnWeight; // Копируем spawnWeight
+
+            enemyHealth.enemyType = modifiedType; // Присваиваем модифицированный тип врага
         }
         
         // Добавляем компонент EnemyVisibility, если его нет
@@ -196,11 +227,7 @@ public class EnemySpawner : MonoBehaviour
         {
             enemy.AddComponent<EnemyVisibility>();
         }
-    }
-
-    // Вызывается при перезапуске игры
-    void OnEnable()
-    {
-        ResetDifficulty();
+        
+        // TODO: Возможно, уменьшать enemiesRemainingInWave при уничтожении врага
     }
 }
