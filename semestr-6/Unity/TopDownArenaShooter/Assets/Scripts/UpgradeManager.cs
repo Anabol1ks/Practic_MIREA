@@ -9,8 +9,10 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgradePanel;
     public Button speedButton, damageButton, healthButton, shotgunButton;
     public Button flashlightRangeButton, flashlightWidthButton;
+    public Button streetLightButton; // Кнопка покупки фонаря
     public TextMeshProUGUI speedPriceText, damagePriceText, healthPriceText, shotgunPriceText;
     public TextMeshProUGUI flashlightRangePriceText, flashlightWidthPriceText;
+    public TextMeshProUGUI streetLightPriceText; // Текст цены фонаря
 
     private PlayerMovement playerMovement;
     private PlayerShooting playerShooting;
@@ -22,6 +24,7 @@ public class UpgradeManager : MonoBehaviour
     private int flashlightRangeLevel = 0, flashlightWidthLevel = 0;
     private int speedPrice = 10, damagePrice = 10, healthPrice = 10, shotgunPrice = 150;
     private int flashlightRangePrice = 15, flashlightWidthPrice = 15;
+    private int streetLightPrice = 50; // Цена фонаря
 
     void Awake()
     {
