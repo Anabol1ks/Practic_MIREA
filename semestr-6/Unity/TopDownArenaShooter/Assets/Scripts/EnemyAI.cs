@@ -12,8 +12,8 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Приоритеты")]
     public float baseAttackPriority = 0.7f; // 70% приоритет на атаку базы
-    public float detectionRadius = 15f; // Радиус в котором враг видит цели
-    public float reducedDetectionRadius = 5f; // Уменьшенный радиус обнаружения, когда враг не в свете фонарика
+    public float detectionRadius = 200f; // Радиус в котором враг видит цели
+    public float reducedDetectionRadius = 100f; // Уменьшенный радиус обнаружения, когда враг не в свете фонарика
 
     private bool isAttackingBase = false;
     private BaseHealth baseHealth;

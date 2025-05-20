@@ -178,8 +178,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 7690768949183217535}
   baseAttackPriority: 0.7
-  detectionRadius: 15
-  reducedDetectionRadius: 5
+  detectionRadius: 200
+  reducedDetectionRadius: 100
 --- !u!114 &2831247693842678656
 MonoBehaviour:
   m_ObjectHideFlags: 0
