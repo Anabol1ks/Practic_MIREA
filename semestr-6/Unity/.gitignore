@@ -7,6 +7,8 @@
 [Ll]ogs/
 [Mm]emoryCaptures/
 
+*.cubemap
+ResidentEvilZZZ/
 # Asset Store tools (если не планируете их изменять)
 Assets/AssetStoreTools*
 
