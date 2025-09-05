@@ -1,9 +1,0 @@
-mosquitto_pub -d -h dev.rightech.io -i mqtt-grigor1 -t base/state/vozduh -m 8
-
-mosquitto_pub -d -h dev.rightech.io -i mqtt-grigor2 -t base/state/voltage -m 40
-
-mosquitto_pub -d -h dev.rightech.io -i mqtt-grigor3 -t base/state/shum -m 30
-
-mosquitto_pub -d -h dev.rightech.io -i mqtt-grigor4 -t base/state/voda -m true
-
-
